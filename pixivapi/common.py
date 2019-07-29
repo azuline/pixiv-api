@@ -20,8 +20,9 @@ def download(url, destination):
 
 
 def require_auth(func):
-    def wrapper(*args, **kwargs):
-        # TODO: Implement
-        raise AuthenticationRequired
+    def wrapper(self, *args, **kwargs):
+        if not self.access_token:
+            raise AuthenticationRequired
+        return func(self, *args, **kwargs)
 
     return wrapper

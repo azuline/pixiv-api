@@ -3,13 +3,14 @@ from json import JSONDecodeError
 import requests
 from requests import RequestError
 
-from pixies.common import CLIENT_ID, CLIENT_SECRET, HEADERS
-from pixies.errors import LoginError
+from pixivapi.common import HEADERS
+from pixivapi.errors import LoginError
 
 AUTH_URL = 'https://oauth.secure.pixiv.net/auth/token'
 
 
 class Client:
+    """An interface for the Pixiv API."""
 
     def __init__(
         self,
@@ -32,9 +33,6 @@ class Client:
             'grant_type': 'password',
             'username': username,
             'password': password,
-            'client_id': CLIENT_ID,
-            'client_secret': CLIENT_SECRET,
-            'get_secure_url': 1,
         })
 
     def authenticate(self, refresh_token):
@@ -44,24 +42,33 @@ class Client:
         self._make_auth_request({
             'grant_type': 'refresh_token',
             'refresh_token': refresh_token,
-            'client_id': CLIENT_ID,
-            'client_secret': CLIENT_SECRET,
-            'get_secure_url': 1,
         })
 
     def _make_auth_request(self, data):
         try:
-            response = requests.post(
-                AUTH_URL,
-                headers={
-                    **HEADERS,
-                    'Content-Type': 'application/x-www-form-urlencoded',
+            r = requests.post(
+                url=AUTH_URL,
+                headers=HEADERS,
+                data={
+                    'client_id': self.client_id,
+                    'client_secret': self.client_secret,
+                    'get_secure_url': 1,
+                    **data,
                 },
-                data=data,
             ).json()
-
-            self.user = response['response']['user']
-            self.access_token = response['response']['access_token']
-            self.refresh_token = response['response']['refresh_token']
+            self.user = r['response']['user']
+            self.access_token = r['response']['access_token']
+            self.refresh_token = r['response']['refresh_token']
         except (RequestError, JSONDecodeError, KeyError) as e:
             raise LoginError from e
+
+    def search_illustrations(
+        self,
+        word,
+        search_target,
+        sort,
+        duration,
+        filter_,
+        offset,
+    ):
+        pass
