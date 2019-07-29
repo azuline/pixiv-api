@@ -1,2 +1,3 @@
 # pixiv
-A library for the Pixiv API
+
+A library for the Pixiv API.
