@@ -1,7 +1,18 @@
 from pixivapi.client import Client
 from pixivapi.common import Struct
-from pixivapi.enums import Duration, SearchTarget, Sort, Visibility
-from pixivapi.errors import AuthenticationRequired, LoginError, PixivError
+from pixivapi.enums import (
+    ContentType,
+    Duration,
+    RankingMode,
+    SearchTarget,
+    Sort,
+    Visibility,
+)
+from pixivapi.errors import (
+    AuthenticationRequired,
+    LoginError,
+    PixivError,
+)
 
 __all__ = (
     'Client',
@@ -9,7 +20,9 @@ __all__ = (
     'AuthenticationRequired',
     'LoginError',
     'PixivError',
+    'ContentType',
     'Duration',
+    'RankingMode',
     'SearchTarget',
     'Sort',
     'Visibility',

@@ -18,7 +18,7 @@ FILTER = 'for_ios'
 
 
 class Client:
-    """An interface for the Pixiv API."""
+    """A client for the Pixiv API."""
 
     def __init__(
         self,
@@ -35,7 +35,14 @@ class Client:
         self.session = Session()
         self.session.headers.update(HEADERS)
 
-    def _request(self, method, url, params=None, headers=None, data=None):
+    def _request(
+        self,
+        method,
+        url,
+        params=None,
+        headers=None,
+        data=None,
+    ):
         """
         A wrapper around ``requests.Session.request`` that adds the
         access token to the request headers if present.
@@ -64,17 +71,25 @@ class Client:
             data=data,
         )
 
-    def _get_struct(self, url, params=None):
+    def _request_struct(
+        self,
+        method,
+        url,
+        params=None,
+        headers=None,
+        data=None,
+    ):
         """
-        A wrapper for JSON GET requests that recursively turns the
-        fetched JSON into a python object.
+        A wrapper for JSON requests that recursively turn the fetched JSON into
+        a python object.
 
         :param str url: The URL to request.
         :param dict params: The request parameters.
+        :param str method: The HTTP method.
         """
         try:
             return Struct(
-                self._request(method='get', url=url, params=params).json()
+                self._request(method=method, url=url, params=params).json()
             )
         except (RequestException, JSONDecodeError) as e:
             raise BadApiResponse from e
@@ -145,7 +160,8 @@ class Client:
         :param Duration duration: An optional max-age for the illustrations.
         :param int offset: The number of illustrations to offset by.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/search/illust',
             params={
                 'word': word,
@@ -163,7 +179,8 @@ class Client:
 
         :param int illustration_id: The ID of the illustration.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/illust/detail',
             params={
                 'illust_id': illustration_id,
@@ -184,7 +201,8 @@ class Client:
         :param int offset: Number of comments to offset by.
         :param bool include_total_comments: TODO figure out what this does.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/illust/comments',
             params={
                 'illust_id': illustration_id,
@@ -201,7 +219,8 @@ class Client:
         :param int illustration_id: ID of the illustration.
         :param int offset: Illustrations to offset by.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v2/illust/related',
             params={
                 'illust_id': illustration_id,
@@ -223,7 +242,8 @@ class Client:
             ``PUBLIC`` if publicly followed; ``PRIVATE`` if privately.
         :param int offset: The number of illustrations to offset by.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v2/illust/follow',
             params={
                 'restrict': visibility.value,
@@ -231,41 +251,18 @@ class Client:
         )
 
     @require_auth
-    def fetch_illustrations_recommended(
-        self,
-        offset=None,
-        content_type='illust',
-        include_ranking_label=True,
-        max_bookmark_id_for_recommend=None,
-        max_bookmark_id_for_recent_illustration=None,
-        include_ranking_illustrations=None,
-        bookmark_illustration_ids=None,
-        include_privacy_policy=None,
-    ):
+    def fetch_illustrations_recommended(self, offset=None):
         """
         Fetch new recommended illustrations. A maximum of TODO are
         returned in one response.
 
-        Note: Some parameters are undocumented due to not knowing what
-        they are.
-
         :param int offset: The number of illustrations to offset by.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/illust/recommended',
             params={
                 'offset': offset,
-                'content_type': content_type,
-                'include_ranking_label': include_ranking_label,
-                'max_bookmark_id_for_recommend': max_bookmark_id_for_recommend,
-                'max_bookmark_id_for_recent_illustration': (
-                    max_bookmark_id_for_recent_illustration
-                ),
-                'include_ranking_illustrations': include_ranking_illustrations,
-                'bookmark_illustration_ids': (
-                    ','.join(bookmark_illustration_ids)
-                ),
-                'include_privacy_policy': include_privacy_policy,
             },
         )
 
@@ -283,7 +280,8 @@ class Client:
         :param str date: The date of the list, in ``%Y-%m-%d`` format.
         :param int offset: The number of illustrations to offset by.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/illust/ranking',
             params={
                 'mode': mode,
@@ -297,10 +295,65 @@ class Client:
         """
         Fetch the trending tags for illustrations.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/trending-tags/illust',
             params={
                 'filter': FILTER,
+            },
+        )
+
+    @require_auth
+    def fetch_bookmark(self, illustration_id):
+        """
+        Fetch details about a bookmarked illustration.
+
+        :param int illustration_id: The ID of the bookmarked illustration.
+        """
+        return self._request_struct(
+            method='get',
+            url=f'{BASE_URL}/v2/illust/bookmark/detail',
+            params={
+                'illust_id': illustration_id,
+            },
+        )
+
+    @require_auth
+    def add_bookmark(
+        self,
+        illustration_id,
+        visibility=Visibility.PUBLIC,
+        tags=None,
+    ):
+        """
+        Bookmark an illustration.
+
+        :param int illustration_id: The ID of the illustration.
+        :param Visibility visibility: The visibility of the bookmark.
+        :param List[str] tags: Tags to assign to the bookmark.
+        """
+        return self._request_struct(
+            method='post',
+            url=f'{BASE_URL}/v2/illust/bookmark/add',
+            data={
+                'illust_id': illustration_id,
+                'restrict': visibility.value,
+                'tags': ' '.join(tags) if tags else tags,
+            },
+        )
+
+    @require_auth
+    def delete_bookmark(self, illustration_id):
+        """
+        Delete a bookmark for an illustration.
+
+        :param int illustration_id: The ID of the illustration.
+        """
+        return self._request_struct(
+            method='post',
+            url=f'{BASE_URL}/v1/illust/bookmark/delete',
+            data={
+                'illust_id': illustration_id,
             },
         )
 
@@ -310,7 +363,8 @@ class Client:
 
         :param int user_id: The ID of the user.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/user/detail',
             params={
                 'user_id': user_id,
@@ -332,7 +386,8 @@ class Client:
         :param int offset: The number of illustrations/manga to offset by.
         """
         # TODO: Check to see if 'illust' includes manga. If not, try None.
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/user/illusts',
             params={
                 'user_id': user_id,
@@ -362,7 +417,8 @@ class Client:
         :param str tag: The bookmark tag to filter bookmarks by. These tags
             can be fetched from ``Client.fetch_user_bookmark_tags``.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/user/bookmarks/illust',
             params={
                 'user_id': user_id,
@@ -385,10 +441,74 @@ class Client:
         :param Visibility visibility: The visibility of the tags.
         :param int offset: The number of tags to offset by.
         """
-        return self._get_struct(
+        return self._request_struct(
+            method='get',
             url=f'{BASE_URL}/v1/user/bookmark-tags/illust',
             params={
                 'restrict': visibility.value,
                 'offset': offset,
+            },
+        )
+
+    @require_auth
+    def fetch_following(
+        self,
+        user_id,
+        visibility=Visibility.PUBLIC,
+        offset=None,
+    ):
+        """
+        Fetch the users that a user is following. A maximum of TODO
+        users are returned in a response.
+
+        :param int user_id: The ID of the user.
+        :param Visibility visibility: The visibility of the followed
+            users. Applies only when fetching one's own followed users.
+        :param int offset: The number of users to offset by.
+        """
+        return self._request_struct(
+            method='get',
+            url=f'{BASE_URL}/v1/user/following',
+            params={
+                'user_id': user_id,
+                'restrict': visibility.value,
+                'offset': offset,
+            },
+        )
+
+    @require_auth
+    def fetch_followers(self, user_id, offset=None):
+        """
+        Fetch the users that are following a user. A maximum of TODO
+        users are returned in a response.
+
+        :param int user_id: The ID of the user.
+        :param int offset: The number of users to offset by.
+        """
+        return self._request_struct(
+            method='get',
+            url=f'{BASE_URL}/v1/user/follower',
+            params={
+                'user_id': user_id,
+                'offset': offset,
+                'filter': FILTER,
+            },
+        )
+
+    @require_auth
+    def fetch_my_pixiv(self, user_id, offset=None):
+        """
+        TODO: Figure out what this fetches.
+
+        :param int user_id: The ID of the user.
+        :param int offset: The number of TODO to offset by.
+        """
+        return self._request_struct(
+            method='get',
+            url=f'{BASE_URL}/v2/user/list',
+            params={
+                'user_id': user_id,
+                'offset': offset,
+                'filter': FILTER,
             },
         )

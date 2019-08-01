@@ -1,3 +1,5 @@
+import functools
+
 import requests
 
 from pixivapi.errors import AuthenticationRequired
@@ -55,6 +57,7 @@ def require_auth(func):
     client has no `access_token`, this decorator will raise an
     `AuthenticationRequired` exception.
     """
+    @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         if not self.access_token:
             raise AuthenticationRequired

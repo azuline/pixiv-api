@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ContentTypes(Enum):
+class ContentType(Enum):
     ILLUSTRATIONS = 'illust'
     MANGA = 'manga'
 
