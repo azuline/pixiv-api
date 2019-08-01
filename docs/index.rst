@@ -1,9 +1,7 @@
-Welcome to pixiv-api's documentation!
-=====================================
+pixiv-api
+=========
 
 A library for the Pixiv API.
-
-.. contents:: Table of Contents
 
 Usage
 =====
@@ -60,6 +58,11 @@ Client
 
 .. automodule:: pixivapi.client
     :members:
+
+Classes
+=======
+
+TODO
 
 Enums
 =====

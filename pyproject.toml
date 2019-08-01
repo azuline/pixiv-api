@@ -18,6 +18,7 @@ requests = "^2.0.0"
 isort = "^4.3"
 flake8 = "^3.7"
 sphinx = "^2.1"
+sphinx_rtd_theme = "^0.4.3"
 
 [build-system]
 requires = ["poetry>=0.12"]
