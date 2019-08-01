@@ -1,10 +1,17 @@
-pixiv-api documentation
------------------------
+pixiv-api
+=========
 
-A library for the Pixiv API.
+A library for the Pixiv API. Uses Pixiv's App API.
 
-Usage
------
+Install this with:
+
+::
+    $ pip install pixiv-api
+
+Read the complete documentation at https://delta.dazzler.dev/pixiv-api/index.html.
+
+Quickstart
+----------
 
 The library can be found on PyPI as ``pixiv-api``.
 
@@ -71,34 +78,3 @@ And the next code block downloads all illustrations of an artist.
            )
        else:
            break
-
-Refer to the `Client` section for documentation on the supported
-endpoints and the `Models` section for documentation on model
-functionality.
-
-Client
-------
-
-.. automodule:: pixivapi.client
-    :members:
-
-Models
-------
-
-.. automodule:: pixivapi.models
-    :members:
-
-Enums
------
-
-.. automodule:: pixivapi.enums
-    :members:
-    :inherited-members:
-    :undoc-members:
-
-Exceptions
-----------
-
-.. automodule:: pixivapi.errors
-    :members:
-    :show-inheritance:
