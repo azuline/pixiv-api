@@ -3,12 +3,17 @@ pixiv-api documentation
 
 A library for the Pixiv API.
 
-Usage
------
+Install with:
 
-The library can be found on PyPI as ``pixiv-api``.
+.. code-block:: bash
 
-To access the Pixiv API, instantiate a client object.
+   $ pip install pixiv-api
+
+
+Quickstart
+----------
+
+To start making requests to the Pixiv API, instantiate a client object.
 
 .. code-block:: python
 

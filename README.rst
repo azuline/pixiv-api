@@ -3,19 +3,18 @@ pixiv-api
 
 A library for the Pixiv API. Uses Pixiv's App API.
 
-Install this with:
+Install with:
 
-::
-    $ pip install pixiv-api
+.. code-block:: bash
+
+   $ pip install pixiv-api
 
 Read the complete documentation at https://delta.dazzler.dev/pixiv-api/index.html.
 
 Quickstart
 ----------
 
-The library can be found on PyPI as ``pixiv-api``.
-
-To access the Pixiv API, instantiate a client object.
+To start making requests to the Pixiv API, instantiate a client object.
 
 .. code-block:: python
 
