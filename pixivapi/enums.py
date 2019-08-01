@@ -2,8 +2,9 @@ from enum import Enum
 
 
 class ContentType(Enum):
-    ILLUSTRATIONS = 'illust'
+    ILLUSTRATION = 'illust'
     MANGA = 'manga'
+    UGOIRA = 'ugoira'
 
 
 class Duration(Enum):
@@ -27,6 +28,13 @@ class SearchTarget(Enum):
     TAGS_PARTIAL = 'partial_match_for_tags'
     TAGS_EXACT = 'exact_match_for_tags'
     TITLE_AND_CAPTION = 'title_and_caption'
+
+
+class Size(Enum):
+    LARGE = 'large'
+    MEDIUM = 'medium'
+    ORIGINAL = 'original'
+    SQUARE_MEDIUM = 'square_medium'
 
 
 class Sort(Enum):

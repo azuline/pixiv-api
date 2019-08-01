@@ -1,10 +1,10 @@
-pixiv-api
-=========
+pixiv-api documentation
+-----------------------
 
 A library for the Pixiv API.
 
 Usage
-=====
+-----
 
 The library can be found on PyPI as ``pixiv-api``.
 
@@ -36,36 +36,62 @@ Once authenticated, a refresh token can be saved for future authorizations.
    refresh_token = client.refresh_token
 
 After authenticating, the client can begin making requests to all of the
-Pixiv endpoints.
-
-The following code fetches details about an image from Pixiv's API and
-downloads the image.
+Pixiv endpoints. For example, the following code block downloads an
+image from Pixiv.
 
 .. code-block:: python
 
+   from pathlib import Path
+   from pixivapi import Size
+
    illustration = client.fetch_illustration(75523989)
-   client.download(
-       illustration.image_urls.large,
-       f'~/my_pixiv_images/{illustration.title}.jpg',
+   illustration.download(
+       directory=Path.home() / 'my_pixiv_images',
+       size=Size.LARGE,
    )
 
-Refer to the ``Client`` section for documentation on the supported endpoints.
+And the next code block downloads all illustrations of an artist.
+
+.. code-block:: python
+
+   from pathlib import Path
+   from pixivapi import Size
+
+   artist_id = 2188232
+   directory = Path.home() / 'wlop'
+
+   response = client.fetch_user_illustrations(artist_id)
+   for illust in response['illustrations']:
+       illust.download(directory=directory, size=Size.LARGE)
+
+       if response['next']:
+           response = client.fetch_user_illustrations(
+               artist_id,
+               offset=response['next'],
+           )
+       else:
+           break
+
+Refer to the `Client` section for documentation on the supported
+endpoints and the `Models` section for documentation on model
+functionality.
 
 TODO: Stuff
 
 Client
-======
+------
 
 .. automodule:: pixivapi.client
     :members:
 
-Classes
-=======
+Models
+------
 
-TODO
+.. automodule:: pixivapi.models
+    :members:
 
 Enums
-=====
+-----
 
 .. automodule:: pixivapi.enums
     :members:
@@ -73,7 +99,7 @@ Enums
     :undoc-members:
 
 Exceptions
-==========
+----------
 
 .. automodule:: pixivapi.errors
     :members:

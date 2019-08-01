@@ -3,30 +3,12 @@
 import os
 from pprint import pprint  # noqa
 
-from pixivapi import Client, Duration, SearchTarget, Sort
-from pixivapi.common import _struct_to_dict
+from pixivapi import Client
 
 c = Client()
 
-# c.login('un', 'password')
 c.authenticate(os.environ['PIXRT'])
 
-"""
-r = c.search_illustrations(
-    'flowers',
-    search_target=SearchTarget.TITLE_AND_CAPTION,
-    sort=Sort.DATE_ASC,
-    # duration=Duration.LAST_MONTH,
-    # offset=5,
-)
-
-pprint(_struct_to_dict(r))
-print(r.illusts[0].title)
-"""
-
-"""
-i = c.fetch_illustration(75523989)
-pprint(_struct_to_dict(i))
-c.download(i.image_urls.large, 'aeolian.jpg')
-"""
-# TODO i.download(size=Size.LARGE, destination='aeolian.jpg')
+r = c.fetch_illustration_related(68656810)
+pprint(r)
+print(r.keys())

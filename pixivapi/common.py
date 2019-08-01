@@ -1,4 +1,5 @@
 import functools
+from urllib import parse
 
 from pixivapi.errors import AuthenticationRequired
 
@@ -54,3 +55,15 @@ def require_auth(func):
         return func(self, *args, **kwargs)
 
     return wrapper
+
+
+def format_bool(bool_):
+    if bool_ is None:
+        return bool_
+    return 'true' if bool_ else 'false_'
+
+
+def parse_offset(next_url):
+    next_query = parse.urlsplit(next_url).query
+    offset = dict(parse.parse_qsl(next_query)).get('offset', None)
+    return int(offset) if offset else None
