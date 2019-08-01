@@ -23,3 +23,10 @@ r = c.search_illustrations(
 pprint(_struct_to_dict(r))
 print(r.illusts[0].title)
 """
+
+"""
+i = c.fetch_illustration(75523989)
+pprint(_struct_to_dict(i))
+c.download(i.image_urls.large, 'aeolian.jpg')
+"""
+# TODO i.download(size=Size.LARGE, destination='aeolian.jpg')

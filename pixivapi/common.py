@@ -1,7 +1,5 @@
 import functools
 
-import requests
-
 from pixivapi.errors import AuthenticationRequired
 
 HEADERS = {
@@ -41,14 +39,6 @@ def _struct_to_dict(struct):
         return value
 
     return {key: _unwrap(value) for key, value in struct.__dict__.items()}
-
-
-def download(url, destination):
-    response = requests.get(url, stream=True)
-    with open(destination, 'wb') as f:
-        for chunk in response.iter_content(chunk_size=1024):
-            if chunk:
-                f.write(chunk)
 
 
 def require_auth(func):
