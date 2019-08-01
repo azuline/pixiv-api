@@ -1,10 +1,26 @@
 from enum import Enum
 
 
+class ContentTypes(Enum):
+    ILLUSTRATIONS = 'illust'
+    MANGA = 'manga'
+
+
 class Duration(Enum):
     LAST_DAY = 'within_last_day'
     LAST_WEEK = 'within_last_week'
     LAST_MONTH = 'within_last_month'
+
+
+class RankingMode(Enum):
+    DAY = 'day'
+    WEEK = 'week'
+    MONTH = 'month'
+    DAY_MALE = 'day_male'
+    DAY_FEMALE = 'day_female'
+    WEEK_ORIGINAL = 'week_original'
+    WEEK_ROOKIE = 'week_rookie'
+    DAY_MANGA = 'day_manga'
 
 
 class SearchTarget(Enum):
