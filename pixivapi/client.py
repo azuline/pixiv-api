@@ -17,7 +17,7 @@ from pixivapi.enums import (
     Visibility,
 )
 from pixivapi.errors import BadApiResponse, LoginError
-from pixivapi.models import Comment, Illustration
+from pixivapi.models import Comment, Illustration, User
 
 AUTH_URL = 'https://oauth.secure.pixiv.net/auth/token'
 BASE_URL = 'https://app-api.pixiv.net'
@@ -99,8 +99,7 @@ class Client:
             not exist.
         :raises PermissionError: If the destination cannot be written to.
         """
-        response = self.session.request(
-            method='get',
+        response = self.session.get(
             url=url,
             headers={'Referer': referer},
             stream=True,
@@ -146,8 +145,7 @@ class Client:
 
     def _make_auth_request(self, data):
         try:
-            r = self.session.request(
-                method='post',
+            r = self.session.post(
                 url=AUTH_URL,
                 data={
                     'client_id': self.client_id,
@@ -635,14 +633,16 @@ class Client:
 
         :param int illustration_id: The ID of the illustration.
         :param Visibility visibility: The visibility of the bookmark.
+
+        :raises requests.RequestException: If the request fails.
         """
         # TODO: Figure out correct way to serialize tags.
-        self._request_json(
-            method='post',
+        self.session.post(
             url=f'{BASE_URL}/v2/illust/bookmark/add',
             data={
                 'illust_id': illustration_id,
                 'restrict': visibility.value,
+                'tags': None,
             },
         )
 
@@ -652,9 +652,10 @@ class Client:
         Delete a bookmark.
 
         :param int illustration_id: The ID of the illustration.
+
+        :raises requests.RequestException: If the request fails.
         """
-        self._request_json(
-            method='post',
+        self.session.post(
             url=f'{BASE_URL}/v1/illust/bookmark/delete',
             data={
                 'illust_id': illustration_id,
@@ -666,16 +667,27 @@ class Client:
         Fetch details about a Pixiv user.
 
         :param int user_id: The ID of the user.
+
+        :return: A User object.
+        :rtype: User
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/user/detail',
-                params={
-                    'user_id': user_id,
-                    'filter': FILTER,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/user/detail',
+            params={
+                'user_id': user_id,
+                'filter': FILTER,
+            },
+        )
+
+        return User(
+            **response['user'],
+            profile=response['profile'],
+            profile_publicity=response['profile_publicity'],
+            workspace=response['workspace'],
         )
 
     def fetch_user_illustrations(
@@ -690,20 +702,41 @@ class Client:
         :param int user_id: The ID of the user.
         :param ContentType type_: The type of content to fetch.
         :param int offset: The number of illustrations/manga to offset by.
+
+        :return: A dictionary containing the user's illustrations and the
+            offset to get the next page of their illustrations. If there
+            is no next page, ``offset`` will be ``None``.
+
+        .. code-block:: python
+
+           {
+               'illustrations': [Illustration, ...],  # List of illustrations.
+               'next': 30,  # Offset to get the next page of illustrations.
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        # TODO: Check to see if 'illust' includes manga. If not, try None.
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/user/illusts',
-                params={
-                    'user_id': user_id,
-                    'type': type_.value if type_ else None,
-                    'offset': offset,
-                    'filter': FILTER,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/user/illusts',
+            params={
+                'user_id': user_id,
+                'type': type_.value if type_ else None,
+                'offset': offset,
+                'filter': FILTER,
+            },
         )
+
+        return {
+            'illustrations': [
+                Illustration(**illust, client=self)
+                for illust in response['illusts']
+            ],
+            'next': parse_qs(response['next_url'], param='offset'),
+        }
 
     @require_auth
     def fetch_user_bookmarks(
@@ -719,48 +752,106 @@ class Client:
 
         :param int user_id: The ID of the user.
         :param Visibility visibility: The visibility of the bookmarks.
-            Applies only to requests for one's own bookmarks.
+            Applies only to requests for one's own bookmarks. If set to
+            ``Visibility.PRIVATE`` for another user, their public bookmarks
+            will be returned.
         :param int max_bookmark_id: The ID of the maximum bookmark,
             similar to ``offset`` for other endpoints.
         :param str tag: The bookmark tag to filter bookmarks by. These tags
             can be fetched from ``Client.fetch_user_bookmark_tags``.
+
+        :return: A dictionary containing the user's bookmarks and the
+            max_bookmark_id needed to get the next page of their
+            bookmarks. If there is no next page, ``max_bookmark_id``
+            will be ``None``.
+
+        .. code-block:: python
+
+           {
+               'illustrations': [Illustration, ...],  # List of illustrations.
+               'next': 30,  # `max_bookmark_id` for the next page of bookmarks.
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/user/bookmarks/illust',
-                params={
-                    'user_id': user_id,
-                    'restrict': visibility.value,
-                    'max_bookmark_id': max_bookmark_id,
-                    'tag': tag,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/user/bookmarks/illust',
+            params={
+                'user_id': user_id,
+                'restrict': visibility.value,
+                'max_bookmark_id': max_bookmark_id,
+                'tag': tag,
+            },
         )
+
+        return {
+            'illustrations': [
+                Illustration(**illust, client=self)
+                for illust in response['illusts']
+            ],
+            'next': parse_qs(response['next_url'], param='max_bookmark_id'),
+        }
 
     @require_auth
     def fetch_user_bookmark_tags(
         self,
+        user_id,
         visibility=Visibility.PUBLIC,
         offset=None,
     ):
         """
         Fetch the bookmark tags that belong to the user. A maximum of
-        TODO tags are returned in a response.
+        30 tags are returned in a response.
 
+        :param int user_id: The ID of the user whose bookmark tags
+            to fetch.
         :param Visibility visibility: The visibility of the tags.
+            Will raise an error if another user's private tags are
+            requested.
         :param int offset: The number of tags to offset by.
+
+        :return: A dictionary containing the user's bookmark tags
+            and the offset needed to get the next page of their
+            bookmark tags. If there is no next page, ``offset``
+            will be ``None``.
+
+        .. code-block:: python
+
+           {
+               'bookmark_tags': [  # List of bookmark tags.
+                   {
+                       'count': 5,  # Number of bookmarks with the tag.
+                       'name': 'a-bookmark-tag',
+                   },
+                   ...
+               ],
+               'next': 30,  # Offset for the next page of bookmark tags.
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON or if
+            another user's private tags are requested.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/user/bookmark-tags/illust',
-                params={
-                    'restrict': visibility.value,
-                    'offset': offset,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/user/bookmark-tags/illust',
+            params={
+                'user_id': user_id,
+                'restrict': visibility.value,
+                'offset': offset,
+            },
         )
+
+        return {
+            'bookmark_tags': response['bookmark_tags'],
+            'next': parse_qs(response['next_url'], param='offset'),
+        }
 
     @require_auth
     def fetch_following(
@@ -770,63 +861,130 @@ class Client:
         offset=None,
     ):
         """
-        Fetch the users that a user is following. A maximum of TODO
+        Fetch the users that a user is following. A maximum of 30
         users are returned in a response.
 
         :param int user_id: The ID of the user.
         :param Visibility visibility: The visibility of the followed
-            users. Applies only when fetching one's own followed users.
+            users. Applies only to one's own follows. If
+            ``Visibility.PRIVATE`` is applied to another user, their
+            publicly followed users will be returned.
         :param int offset: The number of users to offset by.
+
+        :return: A dictionary containing the a list of previews for
+            the followed users and and the offset needed to get the
+            next page of user previews. If there is no next page,
+            ``offset`` will be ``None``.
+
+        .. code-block:: python
+
+           {
+               'user_previews': [  # List of bookmark tags.
+                   {
+                       'illustrations': [  # Their 3 most recent illustrations.
+                           Illustration,
+                           Illustration,
+                           Illustration,
+                       ],
+                       'is_muted': False,  # Are they muted?
+                       'novels': [   # Preview of their novels. TODO
+                       ],
+                       'user': User,  # Basic information about the user.
+                   },
+                   ...
+               ],
+               'next': 30,  # Offset for the next page of user previews.
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/user/following',
-                params={
-                    'user_id': user_id,
-                    'restrict': visibility.value,
-                    'offset': offset,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/user/following',
+            params={
+                'user_id': user_id,
+                'restrict': visibility.value,
+                'offset': offset,
+            },
         )
+
+        return {
+            'user_previews': [
+                {
+                    'illustrations': [
+                        Illustration(**illust, client=self)
+                        for illust in preview['illusts']
+                    ],
+                    'is_muted': preview['is_muted'],
+                    'novels': preview['novels'],
+                    'user': User(**preview['user']),
+                }
+                for preview in response['user_previews']
+            ],
+            'next': parse_qs(response['next_url'], param='offset'),
+        }
 
     @require_auth
-    def fetch_followers(self, user_id, offset=None):
+    def fetch_followers(self, offset=None):
         """
-        Fetch the users that are following a user. A maximum of TODO
-        users are returned in a response.
+        Fetch the users that are following the requesting user.
 
-        :param int user_id: The ID of the user.
         :param int offset: The number of users to offset by.
+
+        :return: A dictionary containing the a list of previews for
+            the users that follow the the requesting user and and the
+            offset needed to get the next page of user previews. If
+            there is no next page, ``offset`` will be ``None``.
+
+        .. code-block:: python
+
+           {
+               'user_previews': [  # List of bookmark tags.
+                   {
+                       'illustrations': [  # Their 3 most recent illustrations.
+                           Illustration,
+                           Illustration,
+                           Illustration,
+                       ],
+                       'is_muted': False,  # Are they muted?
+                       'novels': [   # Preview of their novels. TODO
+                       ],
+                       'user': User,  # Basic information about the user.
+                   },
+                   ...
+               ],
+               'next': 30,  # Offset for the next page of user previews.
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/user/follower',
-                params={
-                    'user_id': user_id,
-                    'offset': offset,
-                    'filter': FILTER,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/user/follower',
+            params={
+                'offset': offset,
+                'filter': FILTER,
+            },
         )
 
-    @require_auth
-    def fetch_my_pixiv(self, user_id, offset=None):
-        """
-        TODO: Figure out what this fetches.
-
-        :param int user_id: The ID of the user.
-        :param int offset: The number of TODO to offset by.
-        """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v2/user/list',
-                params={
-                    'user_id': user_id,
-                    'offset': offset,
-                    'filter': FILTER,
-                },
-            )
-        )
+        return {
+            'user_previews': [
+                {
+                    'illustrations': [
+                        Illustration(**illust, client=self)
+                        for illust in preview['illusts']
+                    ],
+                    'is_muted': preview['is_muted'],
+                    'novels': preview['novels'],
+                    'user': User(**preview['user']),
+                }
+                for preview in response['user_previews']
+            ],
+            'next': parse_qs(response['next_url'], param='offset'),
+        }

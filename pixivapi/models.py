@@ -6,7 +6,9 @@ from pixivapi.enums import ContentType, Size
 
 class User:
     """
-    A model to represent a user.
+    A model that represents a user. Not all instance variables
+    will be populated; the variables that are populated depends
+    on the endpoint that the user is fetched from.
 
     :ivar str account: Their account name
     :ivar int id: Their account ID
@@ -17,6 +19,78 @@ class User:
         from. Typically it will contain `Size.MIDDLE`.
     :ivar bool is_followed: If the user is followed. If the endpoint
         does not return this (e.g. comments), it will be ``None``.
+    :ivar str comment: The comment on the user's account. Only provided
+        when fetching user via ``Client.fetch_user``.
+    :ivar dict profile: Profile information fetched from the
+        ``Client.fetch_user`` endpoint. Example below.
+
+        .. code-block:: python
+
+           {
+               'address_id': 01,
+               'background_image_url': None,
+               'birth': '',
+               'birth_day': '01-01',
+               'birth_year': 0,
+               'country_code': 'CN',
+               'gender': '',
+               'is_premium': True,
+               'is_using_custom_profile_image': True,
+               'job': 'Something',
+               'job_id': 1,
+               'pawoo_url': (
+                   'https://pawoo.net/oauth_authentications/123?provider=pixiv'
+               ),
+               'region': 'China',
+               'total_follow_users': 0,
+               'total_illust_bookmarks_public': 1,
+               'total_illust_series': 0,
+               'total_illusts': 0,
+               'total_manga': 0,
+               'total_mypixiv_users': 0,
+               'total_novel_series': 0,
+               'total_novels': 0,
+               'twitter_account': 'twittername',
+               'twitter_url': 'https://twitter.com/twittername',
+               'webpage': 'https://webpage.com'
+           }
+
+    :ivar dict profile_publicity: A dictionary detailling which parts
+        of the user's profile are public and which are private. Only
+        provided from the ``Client.fetch_user`` endpoint. Example below.
+
+        .. code-block:: python
+
+           {
+               'birth_day': 'public',
+               'birth_year': 'public',
+               'gender': 'public',
+               'job': 'public',
+               'pawoo': True,
+               'region': 'public'
+           }
+
+    :ivar dict workspace: A dictionary containing information about the
+        user's workspace. Only provided from the ``Client.fetch_user``
+        endpoint. Example below.
+
+        .. code-block:: python
+
+           {
+               'chair': '',
+               'comment': '',
+               'desk': '',
+               'desktop': '',
+               'monitor': '',
+               'mouse': '',
+               'music': '',
+               'pc': '',
+               'printer': '',
+               'scanner': '',
+               'tablet': '',
+               'tool': '',
+               'workspace_image_url': None
+           }
     """
 
     def __init__(
@@ -26,18 +100,26 @@ class User:
         name,
         profile_image_urls,
         is_followed=None,
+        comment=None,
+        profile=None,
+        profile_publicity=None,
+        workspace=None,
     ):
         self.account = account
         self.id = id
         self.name = name
         self.profile_image_urls = profile_image_urls
         self.is_followed = is_followed
+        self.comment = comment
+        self.profile = profile
+        self.profile_publicity = profile_publicity
+        self.workspace = workspace
 
 
 class Illustration:
     """
-    The illustration class encapsulates an illustration and provides
-    various methods for convenient fetching of related objects.
+    The illustration models encapsulates an illustration and provides
+    methods for convenient fetching of related objects.
 
     :ivar str caption: Caption
     :ivar datetime.datetime create_date: Creation date
@@ -181,7 +263,7 @@ class Illustration:
 
 class Comment:
     """
-    A class that encapsulates a comment.
+    A model that encapsulates a comment.
 
     :ivar str comment: Content of the comment
     :ivar datetime.datetime date: Date the comment was posted
