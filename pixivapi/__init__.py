@@ -9,7 +9,7 @@ from pixivapi.enums import (
     Visibility,
 )
 from pixivapi.errors import AuthenticationRequired, LoginError, PixivError
-from pixivapi.models import Illustration
+from pixivapi.models import Comment, Illustration, Novel, User
 
 __all__ = (
     'Client',
@@ -23,5 +23,8 @@ __all__ = (
     'AuthenticationRequired',
     'LoginError',
     'PixivError',
+    'Comment',
     'Illustration',
+    'Novel',
+    'User',
 )

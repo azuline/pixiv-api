@@ -17,7 +17,7 @@ from pixivapi.enums import (
     Visibility,
 )
 from pixivapi.errors import BadApiResponse, LoginError
-from pixivapi.models import Comment, Illustration, User
+from pixivapi.models import Comment, Illustration, Novel, User
 
 AUTH_URL = 'https://oauth.secure.pixiv.net/auth/token'
 BASE_URL = 'https://app-api.pixiv.net'
@@ -404,6 +404,7 @@ class Client:
         Fetch one's recommended illustrations.
 
         :param ContentType content_type: The type of content to fetch.
+            Accepts ``ILLUSTRATION`` and ``MANGA``.
         :param bool include_ranking_illustrations: If ``True``, the top
             10 ranked illustrations daily are included in the response.
             If False, the ``ranking_illustrations`` key in the response
@@ -693,14 +694,15 @@ class Client:
     def fetch_user_illustrations(
         self,
         user_id,
-        type_=ContentType.ILLUSTRATION,
+        content_type=ContentType.ILLUSTRATION,
         offset=None,
     ):
         """
         Fetch the illustrations posted by a user.
 
         :param int user_id: The ID of the user.
-        :param ContentType type_: The type of content to fetch.
+        :param ContentType content_type: The type of content to fetch. Accepts
+            ``ILLUSTRATION`` and ``MANGA``.
         :param int offset: The number of illustrations/manga to offset by.
 
         :return: A dictionary containing the user's illustrations and the
@@ -724,7 +726,7 @@ class Client:
             url=f'{BASE_URL}/v1/user/illusts',
             params={
                 'user_id': user_id,
-                'type': type_.value if type_ else None,
+                'type': content_type.value if content_type else None,
                 'offset': offset,
                 'filter': FILTER,
             },
@@ -887,7 +889,10 @@ class Client:
                            Illustration,
                        ],
                        'is_muted': False,  # Are they muted?
-                       'novels': [   # Preview of their novels. TODO
+                       'novels': [   # Their 3 most recent novels.
+                           Novel,
+                           Novel,
+                           Novel,
                        ],
                        'user': User,  # Basic information about the user.
                    },
@@ -919,7 +924,10 @@ class Client:
                         for illust in preview['illusts']
                     ],
                     'is_muted': preview['is_muted'],
-                    'novels': preview['novels'],
+                    'novels': [
+                        Novel(**novel, client=self)
+                        for novel in preview['novels']
+                    ],
                     'user': User(**preview['user']),
                 }
                 for preview in response['user_previews']
@@ -950,7 +958,10 @@ class Client:
                            Illustration,
                        ],
                        'is_muted': False,  # Are they muted?
-                       'novels': [   # Preview of their novels. TODO
+                       'novels': [   # Preview of their novels.
+                           Novel,
+                           Novel,
+                           Novel,
                        ],
                        'user': User,  # Basic information about the user.
                    },
@@ -981,7 +992,10 @@ class Client:
                         for illust in preview['illusts']
                     ],
                     'is_muted': preview['is_muted'],
-                    'novels': preview['novels'],
+                    'novels': [
+                        Novel(**novel, client=self)
+                        for novel in preview['novels']
+                    ],
                     'user': User(**preview['user']),
                 }
                 for preview in response['user_previews']

@@ -9,6 +9,7 @@ class ContentType(Enum):
     ILLUSTRATION = 'illust'
     MANGA = 'manga'
     UGOIRA = 'ugoira'
+    NOVEL = 'novel'
 
 
 class Duration(Enum):

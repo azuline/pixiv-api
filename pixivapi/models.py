@@ -261,6 +261,85 @@ class Illustration:
             )
 
 
+class Novel:
+    """
+    A model that encapsulates a novel.
+
+    :ivar str caption: Caption
+    :ivar datetime.datetime create_date: Creation date
+    :ivar int id: ID
+    :ivar dict image_urls: A dict of Image URLs mapping the Size enum
+        to the URL. There is no ``Size.ORIGINAL``.
+    :ivar bool is_bookmarked: If the novel is bookmarked.
+    :ivar bool is_muted: If the novel is muted.
+    :ivar int page_count: The number of pages.
+    :ivar int restrict: The restriction.
+    :ivar series: If the novel is in a series, this will be a dict
+        with the ``id`` and ``title`` key/value pairs of the series.
+        If the novel is not in a series, this will be ``None``.
+    :ivar list tags: A list of dicts containing three keys: ``name``,
+        ``translated_name``, and ``added_by_uploaded_user``.
+        The ``translated_name`` will be ``None`` if the client language
+        is not set.
+    :ivar int text_length: The length of the novel.
+    :ivar str title: The title of the novel.
+    :ivar int total_bookmarks: The number of times the novel has been
+        bookmarked.
+    :ivar int total_comments: The total number of comments on the novel.
+    :ivar int total_view: The number of times the novel has been viewed.
+    :ivar User user: The author of the novel.
+    :ivar bool visible: The visibility.
+    :ivar int x_restrict: The x restrict.
+    :ivar Client client: The client used to fetch the novel information.
+    """
+
+    def __init__(
+        self,
+        caption,
+        create_date,
+        id,
+        image_urls,
+        is_bookmarked,
+        is_muted,
+        is_mypixiv_only,
+        is_x_restricted,
+        page_count,
+        restrict,
+        series,
+        tags,
+        text_length,
+        title,
+        total_bookmarks,
+        total_comments,
+        total_view,
+        user,
+        visible,
+        x_restrict,
+        client=None,
+    ):
+        self.caption = caption
+        self.create_date = datetime.fromisoformat(create_date)
+        self.id = id
+        self.image_urls = {Size(s): u for s, u in image_urls.items()}
+        self.is_bookmarked = is_bookmarked
+        self.is_muted = is_muted
+        self.is_mypixiv_only = is_mypixiv_only
+        self.is_x_restricted = is_x_restricted
+        self.page_count = page_count
+        self.restrict = restrict
+        self.series = series
+        self.tags = tags
+        self.text_length = text_length
+        self.title = title
+        self.total_bookmarks = total_bookmarks
+        self.total_comments = total_comments
+        self.total_view = total_view
+        self.user = User(**user)
+        self.visible = visible
+        self.x_restrict = x_restrict
+        self.client = client
+
+
 class Comment:
     """
     A model that encapsulates a comment.
@@ -274,7 +353,7 @@ class Comment:
         or not the user is followed.
     """
 
-    def __init__(self, comment, date, id, parent_comment, user, client):
+    def __init__(self, comment, date, id, parent_comment, user, client=None):
         self.comment = comment
         self.date = datetime.fromisoformat(date)
         self.id = id
