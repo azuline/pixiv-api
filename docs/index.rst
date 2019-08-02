@@ -85,12 +85,14 @@ Client
 
 .. automodule:: pixivapi.client
     :members:
+    :member-order: bysource
 
 Models
 ------
 
 .. automodule:: pixivapi.models
     :members:
+    :member-order: bysource
 
 Enums
 -----
@@ -99,6 +101,7 @@ Enums
     :members:
     :inherited-members:
     :undoc-members:
+    :member-order: bysource
 
 Exceptions
 ----------
@@ -106,3 +109,4 @@ Exceptions
 .. automodule:: pixivapi.errors
     :members:
     :show-inheritance:
+    :member-order: bysource

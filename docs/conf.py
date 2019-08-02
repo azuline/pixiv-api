@@ -27,7 +27,3 @@ master_doc = 'index'
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-
-# -- Extension configuration
-
-autodoc_default_options = {'member-order': 'bysource'}

@@ -6,7 +6,7 @@ check:
 	poetry run isort -rc -c .
 	poetry run flake8
 docs:
-	rm -r _docs_build/html _docs_build/doctrees
-	poetry run sphinx-build -M html docs _docs_build
+	rm -r docs/_build/html docs/_build/doctrees
+	poetry run sphinx-build -M html docs docs/_build
 
 .PHONY: lint check docs
