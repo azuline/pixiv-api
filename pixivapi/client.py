@@ -6,7 +6,7 @@ from pixivapi.common import (
     HEADERS,
     Struct,
     format_bool,
-    parse_offset,
+    parse_qs,
     require_auth,
 )
 from pixivapi.enums import (
@@ -42,7 +42,7 @@ class Client:
 
     def __init__(
         self,
-        language=None,
+        language='English',
         client_id='KzEZED7aC0vird8jWyHM38mXjNTY',
         client_secret='W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP',
     ):
@@ -56,49 +56,8 @@ class Client:
 
         self.session = Session()
         self.session.headers.update(HEADERS)
-
-    def _request(
-        self,
-        method,
-        url,
-        params=None,
-        headers=None,
-        data=None,
-        stream=False,
-    ):
-        """
-        A wrapper around ``requests.Session.request`` that adds the
-        access token to the request headers if present.
-
-        :param str method: The request method. Typically ``'get'``
-            or ``'post'``.
-        :param str url: The URL to request.
-        :param dict params: The request parameters.
-        :param dict headers: The request headers.
-        :param dict data: The request data.
-
-        :return: The request's response.
-        :raises: requests.RequestException
-        """
-        # headers has a sentinel value to avoid unsafe mutable default kwarg.
-        return self.session.request(
-            method=method,
-            url=url,
-            headers={
-                **(
-                    {'Authorization': f'Bearer {self.access_token}'}
-                    if self.access_token else {}
-                ),
-                **(
-                    {'Accept-Language': self.language}
-                    if self.language else {}
-                ),
-                **(headers or {}),
-            },
-            params=params,
-            data=data,
-            stream=stream,
-        )
+        if self.language:
+            self.session.headers.update({'Accept-Language': self.language})
 
     def _request_json(
         self,
@@ -112,7 +71,7 @@ class Client:
         A wrapper for JSON requests.
         """
         try:
-            response = self._request(
+            response = self.session.request(
                 method=method,
                 url=url,
                 params=params,
@@ -124,7 +83,7 @@ class Client:
                     f'Status code: {response.status_code}', response.text
                 )
             return response.json()
-        except (RequestException, JSONDecodeError) as e:
+        except JSONDecodeError as e:
             raise BadApiResponse from e
 
     def download(self, url, destination, referer='https://pixiv.net'):
@@ -140,13 +99,13 @@ class Client:
             not exist.
         :raises PermissionError: If the destination cannot be written to.
         """
-        response = self._request(
+        response = self.session.request(
             method='get',
             url=url,
             headers={'Referer': referer},
             stream=True,
         )
-        with open(destination, 'wb') as f:
+        with destination.open('wb') as f:
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:
                     f.write(chunk)
@@ -158,6 +117,8 @@ class Client:
 
         :param str username: Your username.
         :param str password: Your password.
+
+        :raises LoginError: If login fails.
         """
         self._make_auth_request(
             {
@@ -173,6 +134,8 @@ class Client:
         both tokens to instance variables.
 
         :param str refresh_token: The refresh token.
+
+        :raises LoginError: If authentication fails.
         """
         self._make_auth_request(
             {
@@ -183,7 +146,7 @@ class Client:
 
     def _make_auth_request(self, data):
         try:
-            r = self._request(
+            r = self.session.request(
                 method='post',
                 url=AUTH_URL,
                 data={
@@ -196,6 +159,10 @@ class Client:
             self.account = Struct(r['response']['user'])
             self.access_token = r['response']['access_token']
             self.refresh_token = r['response']['refresh_token']
+
+            self.session.headers.update(
+                {'Authorization': f'Bearer {self.access_token}'}
+            )
         except (RequestException, JSONDecodeError, KeyError) as e:
             raise LoginError from e
 
@@ -231,7 +198,10 @@ class Client:
            }
 
         :rtype: dict
-        """
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
+       """
         response = self._request_json(
             method='get',
             url=f'{BASE_URL}/v1/search/illust',
@@ -250,7 +220,7 @@ class Client:
                 Illustration(**illust, client=self)
                 for illust in response['illusts']
             ],
-            'next': parse_offset(response['next_url']),
+            'next': parse_qs(response['next_url'], param='offset'),
             'search_span_limit': response['search_span_limit'],
         }
 
@@ -263,6 +233,9 @@ class Client:
 
         :return: An illustration object.
         :rtype: Illustration
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
         return Illustration(
             **self._request_json(
@@ -309,6 +282,9 @@ class Client:
            }
 
         :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
             method='get',
@@ -325,7 +301,7 @@ class Client:
                 Comment(**comment, client=self)
                 for comment in response['comments']
             ],
-            'next': parse_offset(response['next_url']),
+            'next': parse_qs(response['next_url'], param='offset'),
             'total_comments': response['total_comments'],
         }
 
@@ -339,16 +315,19 @@ class Client:
         :param int offset: Illustrations to offset by.
 
         :return: A dictionary containing the related illustrations and
-            the offset for the next page of comments.
+            the offset for the next page of illustrations.
 
         .. code-block:: python
 
            {
                'illustrations': [Illustration, ...],  # List of illustrations.
-               'next': 30,  # Offset to get the next page of comments.
+               'next': 30,  # Offset to get the next page of illustrations.
            }
 
         :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
             method='get',
@@ -364,7 +343,7 @@ class Client:
                 Illustration(**illust, client=self)
                 for illust in response['illusts']
             ],
-            'next': parse_offset(response['next_url']),
+            'next': parse_qs(response['next_url'], param='offset'),
         }
 
     @require_auth
@@ -374,41 +353,145 @@ class Client:
         offset=None,
     ):
         """
-        Fetch new illustrations from followed artists. A maximum of TODO
-        are returned in one response.
+        Fetch new illustrations from followed artists. A maximum of 30
+        illustrations are returned in one response.
 
         :param Visibility visibility: Visibility of the followed artist;
             ``PUBLIC`` if publicly followed; ``PRIVATE`` if privately.
         :param int offset: The number of illustrations to offset by.
+
+        :return: A dictionary containing the new illustrations and
+            the offset for the next page of illustrations.
+
+        .. code-block:: python
+
+           {
+               'illustrations': [Illustration, ...],  # List of illustrations.
+               'next': 30,  # Offset to get the next page of illustrations.
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v2/illust/follow',
-                params={
-                    'restrict': visibility.value,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v2/illust/follow',
+            params={
+                'restrict': visibility.value,
+            },
         )
+
+        return {
+            'illustrations': [
+                Illustration(**illust, client=self)
+                for illust in response['illusts']
+            ],
+            'next': parse_qs(response['next_url'], param='offset'),
+        }
 
     @require_auth
-    def fetch_illustrations_recommended(self, offset=None):
+    def fetch_illustrations_recommended(
+        self,
+        content_type=ContentType.ILLUSTRATION,
+        include_ranking_illustrations=False,
+        max_bookmark_id_for_recommend=None,
+        min_bookmark_id_for_recent_illustrations=None,
+        offset=None,
+        bookmark_illust_ids=None,
+        include_ranking_label=True,
+    ):
         """
-        Fetch new recommended illustrations. A maximum of TODO are
-        returned in one response.
+        Fetch one's recommended illustrations.
 
+        :param ContentType content_type: The type of content to fetch.
+        :param bool include_ranking_illustrations: If ``True``, the top
+            10 ranked illustrations daily are included in the response.
+            If False, the ``ranking_illustrations`` key in the response
+            dict will be empty.
+        :param int max_bookmark_id_for_recommend: The maximum bookmark
+            ID for recommended illustrations, used for changing the
+            returned illustrations.
+        :param int min_bookmark_id_for_recent_illustrations: The minimum
+            bookmark ID for recent illustrations, used for changing
+            the returned illustrations.
         :param int offset: The number of illustrations to offset by.
-        """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/illust/recommended',
-                params={
-                    'offset': offset,
-                },
-            )
-        )
+        :param list bookmark_illust_ids: A list of illustration IDs.
+        :param bool include_ranking_label: Whether or not to include
+            the ranking label.
 
+        :return: A dictionary containing the recommended illustrations and
+            the parameters for the next page of illustrations.
+
+        .. code-block:: python
+
+           {
+               'contest_exists': False,  # Does a contest exist?
+               'illustrations': [Illustration, ...],  # List of illustrations.
+               'next': {  # Parameters to get the next set of illustrations.
+                   'min_bookmark_id_for_recent_illustrations': 6277740037,
+                   'max_bookmark_id_for_recommend': 6268205545,
+                   'offset': 0,
+               },
+               'ranking_illustrations': [Illustration, ...] # Ranking illust.
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
+        """
+        if bookmark_illust_ids:
+            bookmark_illust_ids = ','.join(
+                str(bid) for bid in bookmark_illust_ids
+            )
+
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/illust/recommended',
+            params={
+                'content_type': content_type.value,
+                'include_ranking_label': format_bool(include_ranking_label),
+                'max_bookmark_id_for_recommend': max_bookmark_id_for_recommend,
+                'min_bookmark_id_for_recent_illust': (
+                    min_bookmark_id_for_recent_illustrations,
+                ),
+                'offset': offset,
+                'include_ranking_illusts': format_bool(
+                    include_ranking_illustrations
+                ),
+                'bookmark_illust_ids': bookmark_illust_ids,
+            },
+        )
+        return {
+            'contest_exists': response['contest_exists'],
+            'illustrations': [
+                Illustration(**illust, client=self)
+                for illust in response['illusts']
+            ],
+            'next': {
+                'min_bookmark_id_for_recent_illustrations': (
+                    parse_qs(
+                        response['next_url'],
+                        param='min_bookmark_id_for_recent_illust',
+                    )
+                ),
+                'max_bookmark_id_for_recommend': (
+                    parse_qs(
+                        response['next_url'],
+                        param='max_bookmark_id_for_recommend',
+                    )
+                ),
+                'offset': parse_qs(response['next_url'], param='offset'),
+            },
+            'ranking_illustrations': [
+                Illustration(**illust, client=self)
+                for illust in response['ranking_illusts']
+            ],
+        }
+
+    @require_auth
     def fetch_illustrations_ranking(
         self,
         mode=RankingMode.DAY,
@@ -422,33 +505,81 @@ class Client:
         :param RankingMode mode: The ranking list to fetch.
         :param str date: The date of the list, in ``%Y-%m-%d`` format.
         :param int offset: The number of illustrations to offset by.
+
+        :return: A dictionary containing the ranking illustrations and
+            the offset for the next page of illustrations.
+
+        .. code-block:: python
+
+           {
+               'illustrations': [Illustration, ...],  # List of illustrations.
+               'next': 30,  # Offset to get the next page of illustrations.
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/illust/ranking',
-                params={
-                    'mode': mode,
-                    'date': date,
-                    'offset': offset,
-                    'filter': FILTER,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/illust/ranking',
+            params={
+                'mode': mode.value,
+                'date': date,
+                'offset': offset,
+                'filter': FILTER,
+            },
         )
 
+        return {
+            'illustrations': [
+                Illustration(**illust, client=self)
+                for illust in response['illusts']
+            ],
+            'next': parse_qs(response['next_url'], param='offset'),
+        }
+
+    @require_auth
     def fetch_trending_tags(self):
         """
-        Fetch the trending tags for illustrations.
+        Fetch trending illustrations and tags.
+
+        :return: A list of dicts containing an illustration, the
+            tag name, and the tag translation.
+
+        .. code-block:: python
+
+           [
+               {
+                   'illustration': Illustration,
+                   'tag': '艦これ',
+                   'translated_name': 'Kancolle',
+               },
+               ...
+           ]
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/trending-tags/illust',
-                params={
-                    'filter': FILTER,
-                },
-            )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v1/trending-tags/illust',
+            params={
+                'filter': FILTER,
+            },
         )
+
+        return [
+            {
+                'illustration': Illustration(**trending['illust']),
+                'tag': trending['tag'],
+                'translated_name': trending['translated_name'],
+            }
+            for trending in response['trend_tags']
+        ]
 
     @require_auth
     def fetch_bookmark(self, illustration_id):
@@ -456,58 +587,78 @@ class Client:
         Fetch details about a bookmarked illustration.
 
         :param int illustration_id: The ID of the bookmarked illustration.
+
+        :return: A dictionary containing whether or not the illustration is
+            bookmarked, the visibility of the bookmark, and a list of tags.
+
+        .. code-block:: python
+
+           {
+               'is_bookmarked': True,
+               'visibility': Visibility.PUBLIC,
+               'tags': [
+                   {
+                       'is_registered': False,
+                       'name': 'ghostblade',
+                   },
+                   ...
+               ],
+           }
+
+        :rtype: dict
+
+        :raises requests.RequestException: If the request fails.
+        :raises BadApiResponse: If the response is not valid JSON.
         """
-        return Struct(
-            self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v2/illust/bookmark/detail',
-                params={
-                    'illust_id': illustration_id,
-                },
-            )
-        )
+        response = self._request_json(
+            method='get',
+            url=f'{BASE_URL}/v2/illust/bookmark/detail',
+            params={
+                'illust_id': illustration_id,
+            },
+        )['bookmark_detail']
+
+        return {
+            'is_bookmarked': response['is_bookmarked'],
+            'visibility': Visibility(response['restrict']),
+            'tags': response['tags'],
+        }
 
     @require_auth
     def add_bookmark(
         self,
         illustration_id,
         visibility=Visibility.PUBLIC,
-        tags=None,
     ):
         """
         Bookmark an illustration.
 
         :param int illustration_id: The ID of the illustration.
         :param Visibility visibility: The visibility of the bookmark.
-        :param List[str] tags: Tags to assign to the bookmark.
         """
-        return Struct(
-            self._request_json(
-                method='post',
-                url=f'{BASE_URL}/v2/illust/bookmark/add',
-                data={
-                    'illust_id': illustration_id,
-                    'restrict': visibility.value,
-                    'tags': ' '.join(tags) if tags else tags,
-                },
-            )
+        # TODO: Figure out correct way to serialize tags.
+        self._request_json(
+            method='post',
+            url=f'{BASE_URL}/v2/illust/bookmark/add',
+            data={
+                'illust_id': illustration_id,
+                'restrict': visibility.value,
+            },
         )
 
     @require_auth
     def delete_bookmark(self, illustration_id):
         """
-        Delete a bookmark for an illustration.
+        Delete a bookmark.
 
         :param int illustration_id: The ID of the illustration.
         """
-        return Struct(
-            self._request_json(
-                method='post',
-                url=f'{BASE_URL}/v1/illust/bookmark/delete',
-                data={
-                    'illust_id': illustration_id,
-                },
-            )
+        self._request_json(
+            method='post',
+            url=f'{BASE_URL}/v1/illust/bookmark/delete',
+            data={
+                'illust_id': illustration_id,
+            },
         )
 
     def fetch_user(self, user_id):

@@ -4,6 +4,7 @@ from pixivapi.enums import (
     Duration,
     RankingMode,
     SearchTarget,
+    Size,
     Sort,
     Visibility,
 )
@@ -16,6 +17,7 @@ __all__ = (
     'Duration',
     'RankingMode',
     'SearchTarget',
+    'Size',
     'Sort',
     'Visibility',
     'AuthenticationRequired',

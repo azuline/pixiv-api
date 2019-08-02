@@ -32,7 +32,7 @@ And another is with a refresh token.
 
 .. code-block:: python
 
-   client.authorize('refresh_token')
+   client.authenticate('refresh_token')
 
 Once authenticated, a refresh token can be saved for future authorizations.
 
@@ -52,7 +52,7 @@ image from Pixiv.
    illustration = client.fetch_illustration(75523989)
    illustration.download(
        directory=Path.home() / 'my_pixiv_images',
-       size=Size.LARGE,
+       size=Size.ORIGINAL,
    )
 
 And the next code block downloads all illustrations of an artist.
@@ -66,16 +66,15 @@ And the next code block downloads all illustrations of an artist.
    directory = Path.home() / 'wlop'
 
    response = client.fetch_user_illustrations(artist_id)
-   for illust in response['illustrations']:
-       illust.download(directory=directory, size=Size.LARGE)
+   while response['next']:
+       for illust in response['illustrations']:
+           illust.download(directory=directory, size=Size.ORIGINAL)
 
        if response['next']:
            response = client.fetch_user_illustrations(
                artist_id,
                offset=response['next'],
            )
-       else:
-           break
 
 Refer to the `Client` section for documentation on the supported
 endpoints and the `Models` section for documentation on model

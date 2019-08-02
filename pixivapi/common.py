@@ -63,7 +63,7 @@ def format_bool(bool_):
     return 'true' if bool_ else 'false_'
 
 
-def parse_offset(next_url):
+def parse_qs(next_url, param):
     next_query = parse.urlsplit(next_url).query
-    offset = dict(parse.parse_qsl(next_query)).get('offset', None)
+    offset = dict(parse.parse_qsl(next_query)).get(param, None)
     return int(offset) if offset else None

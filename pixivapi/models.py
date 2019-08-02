@@ -170,7 +170,7 @@ class Illustration:
                     referer=referer,
                 )
         else:
-            ext = splitext(self.image_urls[size])
+            ext = splitext(self.image_urls[size])[1]
             directory.mkdir(parents=True, exist_ok=True)
             self.client.download(
                 url=self.image_urls[size],
