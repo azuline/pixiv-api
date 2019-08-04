@@ -8,7 +8,12 @@ from pixivapi.enums import (
     Sort,
     Visibility,
 )
-from pixivapi.errors import AuthenticationRequired, LoginError, PixivError
+from pixivapi.errors import (
+    AuthenticationRequired,
+    BadApiResponse,
+    LoginError,
+    PixivError,
+)
 from pixivapi.models import Comment, Illustration, Novel, User
 
 __all__ = (
@@ -21,6 +26,7 @@ __all__ = (
     'Sort',
     'Visibility',
     'AuthenticationRequired',
+    'BadApiResponse',
     'LoginError',
     'PixivError',
     'Comment',
