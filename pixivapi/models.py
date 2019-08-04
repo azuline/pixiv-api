@@ -218,7 +218,7 @@ class Illustration:
         self.client = client
         self.total_comments = total_comments
 
-    def download(self, directory, size=Size.LARGE, filename=None):
+    def download(self, directory, size=Size.ORIGINAL, filename=None):
         """
         Download the illustration to the desired directory. If the
         illustration has multiple pages, a folder will be created and
