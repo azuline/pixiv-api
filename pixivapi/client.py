@@ -2,13 +2,7 @@ from json import JSONDecodeError
 
 from requests import RequestException, Session
 
-from pixivapi.common import (
-    HEADERS,
-    Struct,
-    format_bool,
-    parse_qs,
-    require_auth,
-)
+from pixivapi.common import HEADERS, format_bool, parse_qs, require_auth
 from pixivapi.enums import (
     ContentType,
     RankingMode,
@@ -154,7 +148,7 @@ class Client:
                     **data,
                 },
             ).json()
-            self.account = Struct(r['response']['user'])
+            self.account = r['response']['user']
             self.access_token = r['response']['access_token']
             self.refresh_token = r['response']['refresh_token']
 
