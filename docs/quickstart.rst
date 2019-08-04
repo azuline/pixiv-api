@@ -1,5 +1,5 @@
 Quickstart
-==========
+----------
 
 To start making requests to the Pixiv API, instantiate a client object.
 

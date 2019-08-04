@@ -1,8 +1,8 @@
 Changelog
-=========
+---------
 
 v0.2
-----
+^^^^
 
 - Change ``Client.account`` from a dict to an ``Account`` model.
 - Remove ``None`` attributes from User that only applied to responses from
