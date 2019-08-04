@@ -1,7 +1,5 @@
 from json import JSONDecodeError
 
-from requests import RequestException, Session
-
 from pixivapi.common import HEADERS, format_bool, parse_qs, require_auth
 from pixivapi.enums import (
     ContentType,
@@ -11,7 +9,15 @@ from pixivapi.enums import (
     Visibility,
 )
 from pixivapi.errors import BadApiResponse, LoginError
-from pixivapi.models import Comment, Illustration, Novel, User
+from pixivapi.models import (
+    Account,
+    Comment,
+    FullUser,
+    Illustration,
+    Novel,
+    User,
+)
+from requests import RequestException, Session
 
 AUTH_URL = 'https://oauth.secure.pixiv.net/auth/token'
 BASE_URL = 'https://app-api.pixiv.net'
@@ -27,7 +33,7 @@ class Client:
         default is ok.
     :ivar str client_secret: The client secret. Typically, leaving
         this as default is ok.
-    :ivar dict account: Basic details of the logged in account.
+    :ivar Account account: Basic details of the logged in account.
     :ivar str access_token: The access token used to authorize requests.
     :ivar str refresh_token: The refresh token used to obtain new access
         tokens.
@@ -148,7 +154,7 @@ class Client:
                     **data,
                 },
             ).json()
-            self.account = r['response']['user']
+            self.account = Account(**r['response']['user'])
             self.access_token = r['response']['access_token']
             self.refresh_token = r['response']['refresh_token']
 
@@ -657,14 +663,15 @@ class Client:
             },
         )
 
+    @require_auth
     def fetch_user(self, user_id):
         """
         Fetch details about a Pixiv user.
 
         :param int user_id: The ID of the user.
 
-        :return: A User object.
-        :rtype: User
+        :return: A FullUser object.
+        :rtype: FullUser
 
         :raises requests.RequestException: If the request fails.
         :raises BadApiResponse: If the response is not valid JSON.
@@ -678,13 +685,14 @@ class Client:
             },
         )
 
-        return User(
+        return FullUser(
             **response['user'],
             profile=response['profile'],
             profile_publicity=response['profile_publicity'],
             workspace=response['workspace'],
         )
 
+    @require_auth
     def fetch_user_illustrations(
         self,
         user_id,

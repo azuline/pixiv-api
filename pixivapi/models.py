@@ -10,15 +10,68 @@ class User:
     will be populated; the variables that are populated depends
     on the endpoint that the user is fetched from.
 
+    Typically, the ``profile_image_urls`` dict will contain a ``'medium'``
+    key.
+
     :ivar str account: Their account name
     :ivar int id: Their account ID
     :ivar str name: Their display name
     :ivar dict profile_image_urls: A dictionary of URLs for their profile
-        image, mapping a `Size` enum to the URL. This will not always
-        contain all sizes depending on which endpoint the user was fetched
-        from. Typically it will contain `Size.MIDDLE`.
+        image. The keys are the size and the value is the URL.
     :ivar bool is_followed: If the user is followed. If the endpoint
         does not return this (e.g. comments), it will be ``None``.
+    """
+
+    def __init__(
+        self,
+        account,
+        id,
+        name,
+        profile_image_urls,
+        is_followed=None,
+    ):
+        self.account = account
+        self.id = id
+        self.name = name
+        self.profile_image_urls = profile_image_urls
+        self.is_followed = is_followed
+
+
+class Account(User):
+    """
+    A model for the authenticating user that inherits from ``User``.
+    The properties present in the ``User`` model are also present here.
+
+    The profile images have the sizes 16x16, 50x50, 170x170.
+
+    :ivar str mail_address: The user's email
+    :ivar bool is_premium: Whether or not user has Pixiv premium
+    :ivar int x_restrict: User's x restriction
+    :ivar bool is_mail_authorized: Whether user's email was authorized
+    """
+
+    def __init__(
+        self,
+        profile_image_urls,
+        account,
+        id,
+        name,
+        mail_address,
+        is_premium,
+        x_restrict,
+        is_mail_authorized,
+    ):
+        super().__init__(account, id, name, profile_image_urls)
+        self.mail_address = mail_address
+        self.is_premium = is_premium
+        self.x_restrict = x_restrict
+        self.is_mail_authorized = is_mail_authorized
+
+
+class FullUser(User):
+    """
+    This model inherits the properties that the ``User`` model has.
+
     :ivar str comment: The comment on the user's account. Only provided
         when fetching user via ``Client.fetch_user``.
     :ivar dict profile: Profile information fetched from the
@@ -105,11 +158,7 @@ class User:
         profile_publicity=None,
         workspace=None,
     ):
-        self.account = account
-        self.id = id
-        self.name = name
-        self.profile_image_urls = profile_image_urls
-        self.is_followed = is_followed
+        super().__init__(account, id, name, profile_image_urls, is_followed)
         self.comment = comment
         self.profile = profile
         self.profile_publicity = profile_publicity

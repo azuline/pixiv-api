@@ -92,6 +92,7 @@ Models
 
 .. automodule:: pixivapi.models
     :members:
+    :show-inheritance:
     :member-order: bysource
 
 Enums
