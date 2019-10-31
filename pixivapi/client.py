@@ -1,4 +1,6 @@
+import hashlib
 from json import JSONDecodeError
+from datetime import datetime, timezone
 
 from pixivapi.common import HEADERS, format_bool, parse_qs, require_auth
 from pixivapi.enums import (
@@ -22,6 +24,10 @@ from requests import RequestException, Session
 AUTH_URL = 'https://oauth.secure.pixiv.net/auth/token'
 BASE_URL = 'https://app-api.pixiv.net'
 FILTER = 'for_ios'
+
+LOGIN_SECRET = (
+    '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c'
+)
 
 
 class Client:
@@ -59,14 +65,7 @@ class Client:
         if self.language:
             self.session.headers.update({'Accept-Language': self.language})
 
-    def _request_json(
-        self,
-        method,
-        url,
-        params=None,
-        headers=None,
-        data=None,
-    ):
+    def _request_json(self, method, url, params=None, headers=None, data=None):
         """
         A wrapper for JSON requests.
         """
@@ -100,9 +99,7 @@ class Client:
         :raises PermissionError: If the destination cannot be written to.
         """
         response = self.session.get(
-            url=url,
-            headers={'Referer': referer},
-            stream=True,
+            url=url, headers={'Referer': referer}, stream=True
         )
         with destination.open('wb') as f:
             for chunk in response.iter_content(chunk_size=1024):
@@ -137,13 +134,17 @@ class Client:
         :raises LoginError: If authentication fails.
         """
         self._make_auth_request(
-            {
-                'grant_type': 'refresh_token',
-                'refresh_token': refresh_token,
-            }
+            {'grant_type': 'refresh_token', 'refresh_token': refresh_token}
         )
 
     def _make_auth_request(self, data):
+        client_time = (
+            datetime.utcnow()
+            .replace(microsecond=0)
+            .replace(tzinfo=timezone.utc)
+            .isoformat()
+        )
+
         try:
             r = self.session.post(
                 url=AUTH_URL,
@@ -153,16 +154,22 @@ class Client:
                     'get_secure_url': 1,
                     **data,
                 },
+                headers={
+                    'X-Client-Time': client_time,
+                    'X-Client-Hash': hashlib.md5(
+                        (client_time + LOGIN_SECRET).encode('utf-8')
+                    ).hexdigest(),
+                },
             ).json()
             self.account = Account(**r['response']['user'])
             self.access_token = r['response']['access_token']
             self.refresh_token = r['response']['refresh_token']
-
-            self.session.headers.update(
-                {'Authorization': f'Bearer {self.access_token}'}
-            )
         except (RequestException, JSONDecodeError, KeyError) as e:
             raise LoginError from e
+
+        self.session.headers.update(
+            {'Authorization': f'Bearer {self.access_token}'}
+        )
 
     @require_auth
     def search_illustrations(
@@ -239,19 +246,14 @@ class Client:
             **self._request_json(
                 method='get',
                 url=f'{BASE_URL}/v1/illust/detail',
-                params={
-                    'illust_id': illustration_id,
-                }
+                params={'illust_id': illustration_id},
             )['illust'],
             client=self,
         )
 
     @require_auth
     def fetch_illustration_comments(
-        self,
-        illustration_id,
-        offset=None,
-        include_total_comments=False,
+        self, illustration_id, offset=None, include_total_comments=False
     ):
         """
         Fetch the comments of an illustration. A maximum of 30 comments
@@ -330,10 +332,7 @@ class Client:
         response = self._request_json(
             method='get',
             url=f'{BASE_URL}/v2/illust/related',
-            params={
-                'illust_id': illustration_id,
-                'offset': offset,
-            },
+            params={'illust_id': illustration_id, 'offset': offset},
         )
 
         return {
@@ -346,9 +345,7 @@ class Client:
 
     @require_auth
     def fetch_illustrations_following(
-        self,
-        visibility=Visibility.PUBLIC,
-        offset=None,
+        self, visibility=Visibility.PUBLIC, offset=None
     ):
         """
         Fetch new illustrations from followed artists. A maximum of 30
@@ -376,9 +373,7 @@ class Client:
         response = self._request_json(
             method='get',
             url=f'{BASE_URL}/v2/illust/follow',
-            params={
-                'restrict': visibility.value,
-            },
+            params={'restrict': visibility.value},
         )
 
         return {
@@ -492,10 +487,7 @@ class Client:
 
     @require_auth
     def fetch_illustrations_ranking(
-        self,
-        mode=RankingMode.DAY,
-        date=None,
-        offset=None,
+        self, mode=RankingMode.DAY, date=None, offset=None
     ):
         """
         Fetch the ranking illustrations. A maximum of TODO are returned
@@ -566,9 +558,7 @@ class Client:
         response = self._request_json(
             method='get',
             url=f'{BASE_URL}/v1/trending-tags/illust',
-            params={
-                'filter': FILTER,
-            },
+            params={'filter': FILTER},
         )
 
         return [
@@ -612,9 +602,7 @@ class Client:
         response = self._request_json(
             method='get',
             url=f'{BASE_URL}/v2/illust/bookmark/detail',
-            params={
-                'illust_id': illustration_id,
-            },
+            params={'illust_id': illustration_id},
         )['bookmark_detail']
 
         return {
@@ -624,11 +612,7 @@ class Client:
         }
 
     @require_auth
-    def add_bookmark(
-        self,
-        illustration_id,
-        visibility=Visibility.PUBLIC,
-    ):
+    def add_bookmark(self, illustration_id, visibility=Visibility.PUBLIC):
         """
         Bookmark an illustration.
 
@@ -658,9 +642,7 @@ class Client:
         """
         self.session.post(
             url=f'{BASE_URL}/v1/illust/bookmark/delete',
-            data={
-                'illust_id': illustration_id,
-            },
+            data={'illust_id': illustration_id},
         )
 
     @require_auth
@@ -679,10 +661,7 @@ class Client:
         response = self._request_json(
             method='get',
             url=f'{BASE_URL}/v1/user/detail',
-            params={
-                'user_id': user_id,
-                'filter': FILTER,
-            },
+            params={'user_id': user_id, 'filter': FILTER},
         )
 
         return FullUser(
@@ -694,10 +673,7 @@ class Client:
 
     @require_auth
     def fetch_user_illustrations(
-        self,
-        user_id,
-        content_type=ContentType.ILLUSTRATION,
-        offset=None,
+        self, user_id, content_type=ContentType.ILLUSTRATION, offset=None
     ):
         """
         Fetch the illustrations posted by a user.
@@ -802,10 +778,7 @@ class Client:
 
     @require_auth
     def fetch_user_bookmark_tags(
-        self,
-        user_id,
-        visibility=Visibility.PUBLIC,
-        offset=None,
+        self, user_id, visibility=Visibility.PUBLIC, offset=None
     ):
         """
         Fetch the bookmark tags that belong to the user. A maximum of
@@ -859,10 +832,7 @@ class Client:
 
     @require_auth
     def fetch_following(
-        self,
-        user_id,
-        visibility=Visibility.PUBLIC,
-        offset=None,
+        self, user_id, visibility=Visibility.PUBLIC, offset=None
     ):
         """
         Fetch the users that a user is following. A maximum of 30
@@ -980,10 +950,7 @@ class Client:
         response = self._request_json(
             method='get',
             url=f'{BASE_URL}/v1/user/follower',
-            params={
-                'offset': offset,
-                'filter': FILTER,
-            },
+            params={'offset': offset, 'filter': FILTER},
         )
 
         return {
