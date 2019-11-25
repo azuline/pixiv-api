@@ -54,12 +54,14 @@ And the next code block downloads all illustrations of an artist.
    directory = Path.home() / 'wlop'
 
    response = client.fetch_user_illustrations(artist_id)
-   while response['next']:
+   while True:
        for illust in response['illustrations']:
            illust.download(directory=directory, size=Size.ORIGINAL)
 
-       if response['next']:
-           response = client.fetch_user_illustrations(
-               artist_id,
-               offset=response['next'],
-           )
+       if not response['next']:
+           break
+
+       response = client.fetch_user_illustrations(
+           artist_id,
+           offset=response['next'],
+       )

@@ -75,23 +75,35 @@ And the next code block downloads all illustrations of an artist.
    directory = Path.home() / 'wlop'
 
    response = client.fetch_user_illustrations(artist_id)
-   while response['next']:
+   while True:
        for illust in response['illustrations']:
            illust.download(directory=directory, size=Size.ORIGINAL)
 
-       if response['next']:
-           response = client.fetch_user_illustrations(
-               artist_id,
-               offset=response['next'],
-           )
+       if not response['next']:
+           break
+
+       response = client.fetch_user_illustrations(
+           artist_id,
+           offset=response['next'],
+       )
 
 Read the complete documentation at https://pixiv-api.readthedocs.io.
 
 Changelog
 =========
 
-v0.2
-----
+v0.3.1
+------
+
+- Fix quickstart example documentation.
+
+v0.3.0
+------
+
+- Update authentication in response to Pixiv's changes.
+
+v0.2.0
+------
 
 - Change ``Client.account`` from a dict to an ``Account`` model.
 - Remove ``None`` attributes from User that only applied to responses from
