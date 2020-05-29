@@ -1,6 +1,12 @@
 Changelog
 ---------
 
+v0.3.3
+^^^^^^
+
+- Fix arguments of Novel class instantiation.
+
+
 v0.3.1
 ^^^^^^
 
