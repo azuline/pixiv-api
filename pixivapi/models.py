@@ -352,6 +352,7 @@ class Novel:
         is_muted,
         is_mypixiv_only,
         is_x_restricted,
+        is_original,
         page_count,
         restrict,
         series,
