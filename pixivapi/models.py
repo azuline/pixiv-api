@@ -237,7 +237,7 @@ class Illustration:
         total_comments=None,
     ):
         self.caption = caption
-        self.create_date = datetime.fromisoformat(create_date)
+        self.create_date = datetime.strptime(create_date, "%Y-%m-%dT%H:%M:%S%z")
         self.height = height
         self.id = id
         self.image_urls = {
@@ -368,7 +368,7 @@ class Novel:
         client=None,
     ):
         self.caption = caption
-        self.create_date = datetime.fromisoformat(create_date)
+        self.create_date = datetime.strptime(create_date, "%Y-%m-%dT%H:%M:%S%z")
         self.id = id
         self.image_urls = {Size(s): u for s, u in image_urls.items()}
         self.is_bookmarked = is_bookmarked
