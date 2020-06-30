@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.3.4
+^^^^^^
+
+- Fix issue with Python 3.6 compatibility wrt. datetime module.
+
 v0.3.3
 ^^^^^^
 
