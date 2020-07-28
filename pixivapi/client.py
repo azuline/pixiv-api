@@ -373,7 +373,7 @@ class Client:
         response = self._request_json(
             method='get',
             url=f'{BASE_URL}/v2/illust/follow',
-            params={'restrict': visibility.value},
+            params={'restrict': visibility.value, 'offset': offset},
         )
 
         return {
