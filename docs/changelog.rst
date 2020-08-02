@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.3.5
+^^^^^^
+
+- Fix issue with offset not working in `fetch_illustrations_following`.
+
 v0.3.4
 ^^^^^^
 
