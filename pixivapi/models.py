@@ -321,6 +321,9 @@ class Novel:
         to the URL. There is no ``Size.ORIGINAL``.
     :ivar bool is_bookmarked: If the novel is bookmarked.
     :ivar bool is_muted: If the novel is muted.
+    :ivar bool is_mypixiv_only: If the novel is mypixiv only.
+    :ivar bool is_x_restricted: If the novel is X restricted.
+    :ivar bool is_original: If the novel is an original.
     :ivar int page_count: The number of pages.
     :ivar int restrict: The restriction.
     :ivar series: If the novel is in a series, this will be a dict
@@ -338,7 +341,7 @@ class Novel:
     :ivar int total_view: The number of times the novel has been viewed.
     :ivar User user: The author of the novel.
     :ivar bool visible: The visibility.
-    :ivar int x_restrict: The x restrict.
+    :ivar int x_restrict: The X restrict.
     :ivar Client client: The client used to fetch the novel information.
     """
 
@@ -375,6 +378,7 @@ class Novel:
         self.is_muted = is_muted
         self.is_mypixiv_only = is_mypixiv_only
         self.is_x_restricted = is_x_restricted
+        self.is_original = is_original
         self.page_count = page_count
         self.restrict = restrict
         self.series = series
