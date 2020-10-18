@@ -92,6 +92,11 @@ Read the complete documentation at https://pixiv-api.readthedocs.io.
 Changelog
 =========
 
+v0.3.6
+------
+
+- Fix inability to login.
+
 v0.3.5
 ------
 

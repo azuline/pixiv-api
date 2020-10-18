@@ -1,7 +1,9 @@
 import hashlib
-from json import JSONDecodeError
 from datetime import datetime, timezone
+from json import JSONDecodeError
+
 import cloudscraper
+from requests import RequestException
 
 from pixivapi.common import HEADERS, format_bool, parse_qs, require_auth
 from pixivapi.enums import (
@@ -20,7 +22,6 @@ from pixivapi.models import (
     Novel,
     User,
 )
-from requests import RequestException, Session
 
 AUTH_URL = 'https://oauth.secure.pixiv.net/auth/token'
 BASE_URL = 'https://app-api.pixiv.net'

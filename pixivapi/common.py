@@ -4,7 +4,7 @@ from urllib import parse
 from pixivapi.errors import AuthenticationRequired
 
 HEADERS = {
-    'User-Agent": "PixivAndroidApp/5.0.115 (Android 6.0; PixivBot)',
+    'User-Agent': 'PixivAndroidApp/5.0.115 (Android 6.0; PixivBot)',
 }
 
 
