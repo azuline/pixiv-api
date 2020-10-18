@@ -4,11 +4,7 @@ from urllib import parse
 from pixivapi.errors import AuthenticationRequired
 
 HEADERS = {
-    'App-OS': 'ios',
-    'Accept-Language': 'en-us',
-    'App-OS-Version': '12.0.1',
-    'App-Version': '7.6.2',
-    'User-Agent': 'PixivIOSApp/7.6.2 (iOS 12.2; iPhone8,2)',
+    'User-Agent": "PixivAndroidApp/5.0.115 (Android 6.0; PixivBot)',
 }
 
 
