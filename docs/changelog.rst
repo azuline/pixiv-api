@@ -1,6 +1,11 @@
 Changelog
 ---------
 
+v0.3.6
+^^^^^^
+
+- Fix inability to login.
+
 v0.3.5
 ^^^^^^
 
