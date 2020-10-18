@@ -7,7 +7,7 @@ check:
 	flake8
 
 docs:
-	rm -r docs/_build/html docs/_build/doctrees
+	rm -rf docs/_build/html docs/_build/doctrees
 	sphinx-build -M html docs docs/_build
 
 .PHONY: lint check docs
