@@ -1,6 +1,7 @@
 import hashlib
 from json import JSONDecodeError
 from datetime import datetime, timezone
+import cloudscraper
 
 from pixivapi.common import HEADERS, format_bool, parse_qs, require_auth
 from pixivapi.enums import (
@@ -60,7 +61,7 @@ class Client:
         self.access_token = None
         self.refresh_token = None
 
-        self.session = Session()
+        self.session = cloudscraper.create_scraper()
         self.session.headers.update(HEADERS)
         if self.language:
             self.session.headers.update({'Accept-Language': self.language})
