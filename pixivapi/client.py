@@ -624,12 +624,14 @@ class Client:
 
         :raises requests.RequestException: If the request fails.
         """
+        if tags:
+            tags = ' '.join(tags)
         self.session.post(
             url=f'{BASE_URL}/v2/illust/bookmark/add',
             data={
                 'illust_id': illustration_id,
                 'restrict': visibility.value,
-                'tags[]': ' '.join(tags),
+                'tags[]': tags,
             },
         )
 
