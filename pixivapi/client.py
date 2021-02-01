@@ -614,13 +614,13 @@ class Client:
         }
 
     @require_auth
-    def add_bookmark(self, illustration_id, tags=None, visibility=Visibility.PUBLIC):
+    def add_bookmark(self, illustration_id, visibility=Visibility.PUBLIC, tags=None):
         """
         Bookmark an illustration.
 
         :param int illustration_id: The ID of the illustration.
-        :param str tags: The bookmark tags of the illustration.
         :param Visibility visibility: The visibility of the bookmark.
+        :param list tags: The bookmark tags of the illustration.
 
         :raises requests.RequestException: If the request fails.
         """
@@ -629,7 +629,7 @@ class Client:
             data={
                 'illust_id': illustration_id,
                 'restrict': visibility.value,
-                'tags[]': tags,
+                'tags[]': ' '.join(tags),
             },
         )
 
