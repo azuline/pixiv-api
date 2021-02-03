@@ -614,22 +614,24 @@ class Client:
         }
 
     @require_auth
-    def add_bookmark(self, illustration_id, visibility=Visibility.PUBLIC):
+    def add_bookmark(self, illustration_id, visibility=Visibility.PUBLIC, tags=None):
         """
         Bookmark an illustration.
 
         :param int illustration_id: The ID of the illustration.
         :param Visibility visibility: The visibility of the bookmark.
+        :param list tags: The bookmark tags of the illustration.
 
         :raises requests.RequestException: If the request fails.
         """
-        # TODO: Figure out correct way to serialize tags.
+        if tags:
+            tags = ' '.join(tags)
         self.session.post(
             url=f'{BASE_URL}/v2/illust/bookmark/add',
             data={
                 'illust_id': illustration_id,
                 'restrict': visibility.value,
-                'tags': None,
+                'tags[]': tags,
             },
         )
 
