@@ -1,6 +1,6 @@
 import pytest
 
-from pixivapi.common import require_auth
+from pixivapi.common import format_bool, parse_qs, require_auth
 from pixivapi.errors import AuthenticationRequired
 
 
@@ -25,3 +25,20 @@ def test_require_auth_failure():
 
     with pytest.raises(AuthenticationRequired):
         Test().true()
+
+
+@pytest.mark.parametrize(
+    "arg, result",
+    [
+        (True, "true"),
+        (False, "false"),
+        (None, None),
+    ],
+)
+def test_format_bool(arg, result):
+    assert format_bool(arg) is result
+
+
+def test_parse_qs():
+    next_url = "https://localhost?next=30"
+    assert parse_qs(next_url, "next") == 30
