@@ -1,5 +1,10 @@
 # flake8: noqa
 
+"""
+This module re-exports the "publicly exported" API (i.e. the stuff
+we expect consumers to use and guarantee stability for).
+"""
+
 from pixivapi.client import Client
 from pixivapi.enums import (
     ContentType,

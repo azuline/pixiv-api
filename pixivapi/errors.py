@@ -1,3 +1,8 @@
+"""
+The errors package defines the errors used in this library's API.
+"""
+
+
 class PixivError(Exception):
     pass
 

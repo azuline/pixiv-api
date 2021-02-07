@@ -1,3 +1,9 @@
+"""
+The client module contains a class that exposes a pythonic API to
+Pixiv's JSON API and encapsulates the translation logic between
+the two APIs.
+"""
+
 import hashlib
 from datetime import datetime, timezone
 from json import JSONDecodeError
@@ -47,8 +53,11 @@ class Client:
         self.access_token = None
         self.refresh_token = None
 
+        # Using cloudscraper over a simple session allows us to
+        # get around Cloudflare.
         self.session = cloudscraper.create_scraper()
         self.session.headers.update(HEADERS)
+
         if self.language:
             self.session.headers.update({"Accept-Language": self.language})
 
@@ -77,7 +86,7 @@ class Client:
         Download a file to a given destination. This method uses
         the client's access token if available.
 
-        :param str url:     The URL to the file.
+        :param str url:     The URL of the file.
         :param destination: The destination file. Must be writeable.
         :param str referer: The Referer header.
 

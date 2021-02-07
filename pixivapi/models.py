@@ -1,3 +1,8 @@
+"""
+The models package contains dataclasses that wrap entities returned
+from Pixiv's API.
+"""
+
 from datetime import datetime
 from os.path import splitext
 

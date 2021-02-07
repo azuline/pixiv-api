@@ -6,7 +6,7 @@ pixiv-api
 
 .. |CI| image:: https://img.shields.io/github/workflow/status/azuline/pixiv-api/CI
    :target: https://github.com/azuline/pixiv-api/actions
-.. |Codecov| image:: https://codecov.io/gh/azuline/pixiv-api/branch/master/graph/badge.svg?token=TJSEWBI2ZC
+.. |Codecov| image:: https://img.shields.io/codecov/c/github/azuline/pixiv-api?token=TJSEWBI2ZC
    :target: https://codecov.io/gh/azuline/pixiv-api
 .. |Docs| image:: https://readthedocs.org/projects/pixiv-api/badge/?version=latest
    :target: https://pixiv-api.readthedocs.io/en/latest/?badge=latest

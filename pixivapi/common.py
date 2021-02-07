@@ -10,8 +10,8 @@ HEADERS = {
 
 def require_auth(func):
     """
-    This is a decorator for methods of the Client class. If the
-    client has no `access_token`, this decorator will raise an
+    require_auth is a decorator for methods of the Client class. If
+    the client has no `access_token`, this decorator will raise an
     `AuthenticationRequired` exception.
     """
 
@@ -25,12 +25,18 @@ def require_auth(func):
 
 
 def format_bool(bool_):
+    """
+    format_bool converts a boolean into a lowercased string.
+    """
     if bool_ is None:
         return bool_
     return "true" if bool_ else "false"
 
 
 def parse_qs(next_url, param):
+    """
+    parse_qs parses the int value of a param in a URL's query string.
+    """
     next_query = parse.urlsplit(next_url).query
     val = dict(parse.parse_qsl(next_query)).get(param, None)
     return int(val) if val else None

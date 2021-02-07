@@ -1,3 +1,7 @@
+"""
+The enums package defines the constants used in this library's API.
+"""
+
 from enum import Enum
 
 
