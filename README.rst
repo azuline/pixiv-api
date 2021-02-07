@@ -92,6 +92,11 @@ Read the complete documentation at https://pixiv-api.readthedocs.io.
 Changelog
 =========
 
+v0.3.7
+------
+
+- Add ability to specify tags when adding a bookmark.
+
 v0.3.6
 ------
 
