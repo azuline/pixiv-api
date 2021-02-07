@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        pyversion: ['3.6', '3.7', '3.8', '3.9']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.pyversion }}
+      - uses: abatilo/actions-poetry@v2.1.0
+      - name: Cache dependencies.
+        id: cache-deps
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-${{ matrix.pyversion }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies.
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: poetry install
+      - name: Run tests.
+        run: poetry run pytest --cov-report=xml --cov=. --cov-branch tests/
+      - name: Upload coverage.
+        run: bash <(curl -s https://codecov.io/bash) -cF python
+
+  lint_check:
+    name: Lint check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: abatilo/actions-poetry@v2.1.0
+        with:
+          poetry-version: 1.1.4
+      - name: Cache dependencies.
+        id: cache-deps
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies.
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: poetry install
+      - name: Run lint check.
+        run: make lintcheck
+
+  setupfiles:
+    name: Setupfiles
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: abatilo/actions-poetry@v2.1.0
+        with:
+          poetry-version: 1.1.4
+      - name: Cache dependencies.
+        id: cache-deps
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies.
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: poetry install
+      - name: Diff committed setupfiles and generated setupfiles.
+        run: make setupcheck

@@ -1,5 +1,6 @@
-from pixivapi.common import require_auth
 import pytest
+
+from pixivapi.common import require_auth
 from pixivapi.errors import AuthenticationRequired
 
 

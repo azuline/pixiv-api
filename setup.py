@@ -35,5 +35,5 @@ setup(
     package_dir={"": "."},
     package_data={},
     install_requires=['cloudscraper==1.*,>=1.2.48', 'requests==2.*,>=2.0.0'],
-    extras_require={"dev": ["black==20.*,>=20.8.0.b1", "dephell==0.*,>=0.8.3", "flake8==3.*,>=3.7.0", "isort==4.*,>=4.3.0", "responses==0.*,>=0.12.1", "sphinx==2.*,>=2.1.0", "sphinx-rtd-theme==0.*,>=0.4.3"]},
+    extras_require={"dev": ["black==20.*,>=20.8.0.b1", "dephell==0.*,>=0.8.3", "flake8==3.*,>=3.7.0", "isort==5.*,>=5.7.0", "pytest==6.*,>=6.2.2", "pytest-cov==2.*,>=2.11.1", "responses==0.*,>=0.12.1", "sphinx==2.*,>=2.1.0", "sphinx-rtd-theme==0.*,>=0.4.3"]},
 )

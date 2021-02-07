@@ -2,14 +2,18 @@
 pixiv-api
 =========
 
-|PyPI| |Pyversions| |Docs|
+|CI| |Codecov| |Docs| |PyPI| |Pyversions|
 
+.. |CI| image:: https://img.shields.io/github/workflow/status/azuline/pixiv-api/CI
+   :target: https://github.com/azuline/pixiv-api/actions
+.. |Codecov| image:: https://codecov.io/gh/azuline/pixiv-api/branch/master/graph/badge.svg?token=TJSEWBI2ZC
+   :target: https://codecov.io/gh/azuline/pixiv-api
+.. |Docs| image:: https://readthedocs.org/projects/pixiv-api/badge/?version=latest
+   :target: https://pixiv-api.readthedocs.io/en/latest/?badge=latest
 .. |PyPI| image:: https://img.shields.io/pypi/v/pixiv-api.svg
    :target: https://pypi.python.org/pypi/pixiv-api
 .. |Pyversions| image:: https://img.shields.io/pypi/pyversions/pixiv-api.svg
    :target: https://pypi.python.org/pypi/pixiv-api
-.. |Docs| image:: https://readthedocs.org/projects/pixiv-api/badge/?version=latest
-   :target: https://pixiv-api.readthedocs.io/en/latest/?badge=latest
 
 A library for the Pixiv API. Uses Pixiv's App API.
 
