@@ -6,30 +6,15 @@ import cloudscraper
 from requests import RequestException
 
 from pixivapi.common import HEADERS, format_bool, parse_qs, require_auth
-from pixivapi.enums import (
-    ContentType,
-    RankingMode,
-    SearchTarget,
-    Sort,
-    Visibility,
-)
+from pixivapi.enums import ContentType, RankingMode, SearchTarget, Sort, Visibility
 from pixivapi.errors import BadApiResponse, LoginError
-from pixivapi.models import (
-    Account,
-    Comment,
-    FullUser,
-    Illustration,
-    Novel,
-    User,
-)
+from pixivapi.models import Account, Comment, FullUser, Illustration, Novel, User
 
-AUTH_URL = 'https://oauth.secure.pixiv.net/auth/token'
-BASE_URL = 'https://app-api.pixiv.net'
-FILTER = 'for_ios'
+AUTH_URL = "https://oauth.secure.pixiv.net/auth/token"
+BASE_URL = "https://app-api.pixiv.net"
+FILTER = "for_ios"
 
-LOGIN_SECRET = (
-    '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c'
-)
+LOGIN_SECRET = "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c"
 
 
 class Client:
@@ -50,9 +35,9 @@ class Client:
 
     def __init__(
         self,
-        language='English',
-        client_id='KzEZED7aC0vird8jWyHM38mXjNTY',
-        client_secret='W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP',
+        language="English",
+        client_id="KzEZED7aC0vird8jWyHM38mXjNTY",
+        client_secret="W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP",
     ):
         self.language = language
         self.client_id = client_id
@@ -65,7 +50,7 @@ class Client:
         self.session = cloudscraper.create_scraper()
         self.session.headers.update(HEADERS)
         if self.language:
-            self.session.headers.update({'Accept-Language': self.language})
+            self.session.headers.update({"Accept-Language": self.language})
 
     def _request_json(self, method, url, params=None, headers=None, data=None):
         """
@@ -81,13 +66,13 @@ class Client:
             )
             if response.status_code // 100 == 4:
                 raise BadApiResponse(
-                    f'Status code: {response.status_code}', response.text
+                    f"Status code: {response.status_code}", response.text
                 )
             return response.json()
         except JSONDecodeError as e:
             raise BadApiResponse from e
 
-    def download(self, url, destination, referer='https://pixiv.net'):
+    def download(self, url, destination, referer="https://pixiv.net"):
         """
         Download a file to a given destination. This method uses
         the client's access token if available.
@@ -100,10 +85,8 @@ class Client:
             not exist.
         :raises PermissionError: If the destination cannot be written to.
         """
-        response = self.session.get(
-            url=url, headers={'Referer': referer}, stream=True
-        )
-        with destination.open('wb') as f:
+        response = self.session.get(url=url, headers={"Referer": referer}, stream=True)
+        with destination.open("wb") as f:
             for chunk in response.iter_content(chunk_size=1024):
                 if chunk:
                     f.write(chunk)
@@ -120,9 +103,9 @@ class Client:
         """
         self._make_auth_request(
             {
-                'grant_type': 'password',
-                'username': username,
-                'password': password,
+                "grant_type": "password",
+                "username": username,
+                "password": password,
             }
         )
 
@@ -136,7 +119,7 @@ class Client:
         :raises LoginError: If authentication fails.
         """
         self._make_auth_request(
-            {'grant_type': 'refresh_token', 'refresh_token': refresh_token}
+            {"grant_type": "refresh_token", "refresh_token": refresh_token}
         )
 
     def _make_auth_request(self, data):
@@ -151,27 +134,25 @@ class Client:
             r = self.session.post(
                 url=AUTH_URL,
                 data={
-                    'client_id': self.client_id,
-                    'client_secret': self.client_secret,
-                    'get_secure_url': 1,
+                    "client_id": self.client_id,
+                    "client_secret": self.client_secret,
+                    "get_secure_url": 1,
                     **data,
                 },
                 headers={
-                    'X-Client-Time': client_time,
-                    'X-Client-Hash': hashlib.md5(
-                        (client_time + LOGIN_SECRET).encode('utf-8')
+                    "X-Client-Time": client_time,
+                    "X-Client-Hash": hashlib.md5(
+                        (client_time + LOGIN_SECRET).encode("utf-8")
                     ).hexdigest(),
                 },
             ).json()
-            self.account = Account(**r['response']['user'])
-            self.access_token = r['response']['access_token']
-            self.refresh_token = r['response']['refresh_token']
+            self.account = Account(**r["response"]["user"])
+            self.access_token = r["response"]["access_token"]
+            self.refresh_token = r["response"]["refresh_token"]
         except (RequestException, JSONDecodeError, KeyError) as e:
             raise LoginError from e
 
-        self.session.headers.update(
-            {'Authorization': f'Bearer {self.access_token}'}
-        )
+        self.session.headers.update({"Authorization": f"Bearer {self.access_token}"})
 
     @require_auth
     def search_illustrations(
@@ -208,27 +189,26 @@ class Client:
 
         :raises requests.RequestException: If the request fails.
         :raises BadApiResponse: If the response is not valid JSON.
-       """
+        """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/search/illust',
+            method="get",
+            url=f"{BASE_URL}/v1/search/illust",
             params={
-                'word': word,
-                'search_target': search_target.value,
-                'sort': sort.value,
-                'duration': duration.value if duration else None,
-                'offset': offset,
-                'filter': FILTER,
+                "word": word,
+                "search_target": search_target.value,
+                "sort": sort.value,
+                "duration": duration.value if duration else None,
+                "offset": offset,
+                "filter": FILTER,
             },
         )
 
         return {
-            'illustrations': [
-                Illustration(**illust, client=self)
-                for illust in response['illusts']
+            "illustrations": [
+                Illustration(**illust, client=self) for illust in response["illusts"]
             ],
-            'next': parse_qs(response['next_url'], param='offset'),
-            'search_span_limit': response['search_span_limit'],
+            "next": parse_qs(response["next_url"], param="offset"),
+            "search_span_limit": response["search_span_limit"],
         }
 
     @require_auth
@@ -246,10 +226,10 @@ class Client:
         """
         return Illustration(
             **self._request_json(
-                method='get',
-                url=f'{BASE_URL}/v1/illust/detail',
-                params={'illust_id': illustration_id},
-            )['illust'],
+                method="get",
+                url=f"{BASE_URL}/v1/illust/detail",
+                params={"illust_id": illustration_id},
+            )["illust"],
             client=self,
         )
 
@@ -289,22 +269,21 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/illust/comments',
+            method="get",
+            url=f"{BASE_URL}/v1/illust/comments",
             params={
-                'illust_id': illustration_id,
-                'offset': offset,
-                'include_total_comments': format_bool(include_total_comments),
+                "illust_id": illustration_id,
+                "offset": offset,
+                "include_total_comments": format_bool(include_total_comments),
             },
         )
 
         return {
-            'comments': [
-                Comment(**comment, client=self)
-                for comment in response['comments']
+            "comments": [
+                Comment(**comment, client=self) for comment in response["comments"]
             ],
-            'next': parse_qs(response['next_url'], param='offset'),
-            'total_comments': response['total_comments'],
+            "next": parse_qs(response["next_url"], param="offset"),
+            "total_comments": response["total_comments"],
         }
 
     @require_auth
@@ -332,23 +311,20 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v2/illust/related',
-            params={'illust_id': illustration_id, 'offset': offset},
+            method="get",
+            url=f"{BASE_URL}/v2/illust/related",
+            params={"illust_id": illustration_id, "offset": offset},
         )
 
         return {
-            'illustrations': [
-                Illustration(**illust, client=self)
-                for illust in response['illusts']
+            "illustrations": [
+                Illustration(**illust, client=self) for illust in response["illusts"]
             ],
-            'next': parse_qs(response['next_url'], param='offset'),
+            "next": parse_qs(response["next_url"], param="offset"),
         }
 
     @require_auth
-    def fetch_illustrations_following(
-        self, visibility=Visibility.PUBLIC, offset=None
-    ):
+    def fetch_illustrations_following(self, visibility=Visibility.PUBLIC, offset=None):
         """
         Fetch new illustrations from followed artists. A maximum of 30
         illustrations are returned in one response.
@@ -373,17 +349,16 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v2/illust/follow',
-            params={'restrict': visibility.value, 'offset': offset},
+            method="get",
+            url=f"{BASE_URL}/v2/illust/follow",
+            params={"restrict": visibility.value, "offset": offset},
         )
 
         return {
-            'illustrations': [
-                Illustration(**illust, client=self)
-                for illust in response['illusts']
+            "illustrations": [
+                Illustration(**illust, client=self) for illust in response["illusts"]
             ],
-            'next': parse_qs(response['next_url'], param='offset'),
+            "next": parse_qs(response["next_url"], param="offset"),
         }
 
     @require_auth
@@ -439,58 +414,51 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         if bookmark_illust_ids:
-            bookmark_illust_ids = ','.join(
-                str(bid) for bid in bookmark_illust_ids
-            )
+            bookmark_illust_ids = ",".join(str(bid) for bid in bookmark_illust_ids)
 
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/illust/recommended',
+            method="get",
+            url=f"{BASE_URL}/v1/illust/recommended",
             params={
-                'content_type': content_type.value,
-                'include_ranking_label': format_bool(include_ranking_label),
-                'max_bookmark_id_for_recommend': max_bookmark_id_for_recommend,
-                'min_bookmark_id_for_recent_illust': (
+                "content_type": content_type.value,
+                "include_ranking_label": format_bool(include_ranking_label),
+                "max_bookmark_id_for_recommend": max_bookmark_id_for_recommend,
+                "min_bookmark_id_for_recent_illust": (
                     min_bookmark_id_for_recent_illustrations,
                 ),
-                'offset': offset,
-                'include_ranking_illusts': format_bool(
-                    include_ranking_illustrations
-                ),
-                'bookmark_illust_ids': bookmark_illust_ids,
+                "offset": offset,
+                "include_ranking_illusts": format_bool(include_ranking_illustrations),
+                "bookmark_illust_ids": bookmark_illust_ids,
             },
         )
         return {
-            'contest_exists': response['contest_exists'],
-            'illustrations': [
-                Illustration(**illust, client=self)
-                for illust in response['illusts']
+            "contest_exists": response["contest_exists"],
+            "illustrations": [
+                Illustration(**illust, client=self) for illust in response["illusts"]
             ],
-            'next': {
-                'min_bookmark_id_for_recent_illustrations': (
+            "next": {
+                "min_bookmark_id_for_recent_illustrations": (
                     parse_qs(
-                        response['next_url'],
-                        param='min_bookmark_id_for_recent_illust',
+                        response["next_url"],
+                        param="min_bookmark_id_for_recent_illust",
                     )
                 ),
-                'max_bookmark_id_for_recommend': (
+                "max_bookmark_id_for_recommend": (
                     parse_qs(
-                        response['next_url'],
-                        param='max_bookmark_id_for_recommend',
+                        response["next_url"],
+                        param="max_bookmark_id_for_recommend",
                     )
                 ),
-                'offset': parse_qs(response['next_url'], param='offset'),
+                "offset": parse_qs(response["next_url"], param="offset"),
             },
-            'ranking_illustrations': [
+            "ranking_illustrations": [
                 Illustration(**illust, client=self)
-                for illust in response['ranking_illusts']
+                for illust in response["ranking_illusts"]
             ],
         }
 
     @require_auth
-    def fetch_illustrations_ranking(
-        self, mode=RankingMode.DAY, date=None, offset=None
-    ):
+    def fetch_illustrations_ranking(self, mode=RankingMode.DAY, date=None, offset=None):
         """
         Fetch the ranking illustrations. A maximum of TODO are returned
         in one response.
@@ -515,22 +483,21 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/illust/ranking',
+            method="get",
+            url=f"{BASE_URL}/v1/illust/ranking",
             params={
-                'mode': mode.value,
-                'date': date,
-                'offset': offset,
-                'filter': FILTER,
+                "mode": mode.value,
+                "date": date,
+                "offset": offset,
+                "filter": FILTER,
             },
         )
 
         return {
-            'illustrations': [
-                Illustration(**illust, client=self)
-                for illust in response['illusts']
+            "illustrations": [
+                Illustration(**illust, client=self) for illust in response["illusts"]
             ],
-            'next': parse_qs(response['next_url'], param='offset'),
+            "next": parse_qs(response["next_url"], param="offset"),
         }
 
     @require_auth
@@ -558,18 +525,18 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/trending-tags/illust',
-            params={'filter': FILTER},
+            method="get",
+            url=f"{BASE_URL}/v1/trending-tags/illust",
+            params={"filter": FILTER},
         )
 
         return [
             {
-                'illustration': Illustration(**trending['illust']),
-                'tag': trending['tag'],
-                'translated_name': trending['translated_name'],
+                "illustration": Illustration(**trending["illust"]),
+                "tag": trending["tag"],
+                "translated_name": trending["translated_name"],
             }
-            for trending in response['trend_tags']
+            for trending in response["trend_tags"]
         ]
 
     @require_auth
@@ -602,15 +569,15 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v2/illust/bookmark/detail',
-            params={'illust_id': illustration_id},
-        )['bookmark_detail']
+            method="get",
+            url=f"{BASE_URL}/v2/illust/bookmark/detail",
+            params={"illust_id": illustration_id},
+        )["bookmark_detail"]
 
         return {
-            'is_bookmarked': response['is_bookmarked'],
-            'visibility': Visibility(response['restrict']),
-            'tags': response['tags'],
+            "is_bookmarked": response["is_bookmarked"],
+            "visibility": Visibility(response["restrict"]),
+            "tags": response["tags"],
         }
 
     @require_auth
@@ -625,13 +592,13 @@ class Client:
         :raises requests.RequestException: If the request fails.
         """
         if tags:
-            tags = ' '.join(tags)
+            tags = " ".join(tags)
         self.session.post(
-            url=f'{BASE_URL}/v2/illust/bookmark/add',
+            url=f"{BASE_URL}/v2/illust/bookmark/add",
             data={
-                'illust_id': illustration_id,
-                'restrict': visibility.value,
-                'tags[]': tags,
+                "illust_id": illustration_id,
+                "restrict": visibility.value,
+                "tags[]": tags,
             },
         )
 
@@ -645,8 +612,8 @@ class Client:
         :raises requests.RequestException: If the request fails.
         """
         self.session.post(
-            url=f'{BASE_URL}/v1/illust/bookmark/delete',
-            data={'illust_id': illustration_id},
+            url=f"{BASE_URL}/v1/illust/bookmark/delete",
+            data={"illust_id": illustration_id},
         )
 
     @require_auth
@@ -663,16 +630,16 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/user/detail',
-            params={'user_id': user_id, 'filter': FILTER},
+            method="get",
+            url=f"{BASE_URL}/v1/user/detail",
+            params={"user_id": user_id, "filter": FILTER},
         )
 
         return FullUser(
-            **response['user'],
-            profile=response['profile'],
-            profile_publicity=response['profile_publicity'],
-            workspace=response['workspace'],
+            **response["user"],
+            profile=response["profile"],
+            profile_publicity=response["profile_publicity"],
+            workspace=response["workspace"],
         )
 
     @require_auth
@@ -704,22 +671,21 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/user/illusts',
+            method="get",
+            url=f"{BASE_URL}/v1/user/illusts",
             params={
-                'user_id': user_id,
-                'type': content_type.value if content_type else None,
-                'offset': offset,
-                'filter': FILTER,
+                "user_id": user_id,
+                "type": content_type.value if content_type else None,
+                "offset": offset,
+                "filter": FILTER,
             },
         )
 
         return {
-            'illustrations': [
-                Illustration(**illust, client=self)
-                for illust in response['illusts']
+            "illustrations": [
+                Illustration(**illust, client=self) for illust in response["illusts"]
             ],
-            'next': parse_qs(response['next_url'], param='offset'),
+            "next": parse_qs(response["next_url"], param="offset"),
         }
 
     @require_auth
@@ -762,22 +728,21 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/user/bookmarks/illust',
+            method="get",
+            url=f"{BASE_URL}/v1/user/bookmarks/illust",
             params={
-                'user_id': user_id,
-                'restrict': visibility.value,
-                'max_bookmark_id': max_bookmark_id,
-                'tag': tag,
+                "user_id": user_id,
+                "restrict": visibility.value,
+                "max_bookmark_id": max_bookmark_id,
+                "tag": tag,
             },
         )
 
         return {
-            'illustrations': [
-                Illustration(**illust, client=self)
-                for illust in response['illusts']
+            "illustrations": [
+                Illustration(**illust, client=self) for illust in response["illusts"]
             ],
-            'next': parse_qs(response['next_url'], param='max_bookmark_id'),
+            "next": parse_qs(response["next_url"], param="max_bookmark_id"),
         }
 
     @require_auth
@@ -820,24 +785,22 @@ class Client:
             another user's private tags are requested.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/user/bookmark-tags/illust',
+            method="get",
+            url=f"{BASE_URL}/v1/user/bookmark-tags/illust",
             params={
-                'user_id': user_id,
-                'restrict': visibility.value,
-                'offset': offset,
+                "user_id": user_id,
+                "restrict": visibility.value,
+                "offset": offset,
             },
         )
 
         return {
-            'bookmark_tags': response['bookmark_tags'],
-            'next': parse_qs(response['next_url'], param='offset'),
+            "bookmark_tags": response["bookmark_tags"],
+            "next": parse_qs(response["next_url"], param="offset"),
         }
 
     @require_auth
-    def fetch_following(
-        self, user_id, visibility=Visibility.PUBLIC, offset=None
-    ):
+    def fetch_following(self, user_id, visibility=Visibility.PUBLIC, offset=None):
         """
         Fetch the users that a user is following. A maximum of 30
         users are returned in a response.
@@ -883,32 +846,31 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/user/following',
+            method="get",
+            url=f"{BASE_URL}/v1/user/following",
             params={
-                'user_id': user_id,
-                'restrict': visibility.value,
-                'offset': offset,
+                "user_id": user_id,
+                "restrict": visibility.value,
+                "offset": offset,
             },
         )
 
         return {
-            'user_previews': [
+            "user_previews": [
                 {
-                    'illustrations': [
+                    "illustrations": [
                         Illustration(**illust, client=self)
-                        for illust in preview['illusts']
+                        for illust in preview["illusts"]
                     ],
-                    'is_muted': preview['is_muted'],
-                    'novels': [
-                        Novel(**novel, client=self)
-                        for novel in preview['novels']
+                    "is_muted": preview["is_muted"],
+                    "novels": [
+                        Novel(**novel, client=self) for novel in preview["novels"]
                     ],
-                    'user': User(**preview['user']),
+                    "user": User(**preview["user"]),
                 }
-                for preview in response['user_previews']
+                for preview in response["user_previews"]
             ],
-            'next': parse_qs(response['next_url'], param='offset'),
+            "next": parse_qs(response["next_url"], param="offset"),
         }
 
     @require_auth
@@ -952,26 +914,25 @@ class Client:
         :raises BadApiResponse: If the response is not valid JSON.
         """
         response = self._request_json(
-            method='get',
-            url=f'{BASE_URL}/v1/user/follower',
-            params={'offset': offset, 'filter': FILTER},
+            method="get",
+            url=f"{BASE_URL}/v1/user/follower",
+            params={"offset": offset, "filter": FILTER},
         )
 
         return {
-            'user_previews': [
+            "user_previews": [
                 {
-                    'illustrations': [
+                    "illustrations": [
                         Illustration(**illust, client=self)
-                        for illust in preview['illusts']
+                        for illust in preview["illusts"]
                     ],
-                    'is_muted': preview['is_muted'],
-                    'novels': [
-                        Novel(**novel, client=self)
-                        for novel in preview['novels']
+                    "is_muted": preview["is_muted"],
+                    "novels": [
+                        Novel(**novel, client=self) for novel in preview["novels"]
                     ],
-                    'user': User(**preview['user']),
+                    "user": User(**preview["user"]),
                 }
-                for preview in response['user_previews']
+                for preview in response["user_previews"]
             ],
-            'next': parse_qs(response['next_url'], param='offset'),
+            "next": parse_qs(response["next_url"], param="offset"),
         }

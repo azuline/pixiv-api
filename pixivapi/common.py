@@ -4,7 +4,7 @@ from urllib import parse
 from pixivapi.errors import AuthenticationRequired
 
 HEADERS = {
-    'User-Agent': 'PixivAndroidApp/5.0.115 (Android 6.0; PixivBot)',
+    "User-Agent": "PixivAndroidApp/5.0.115 (Android 6.0; PixivBot)",
 }
 
 
@@ -14,6 +14,7 @@ def require_auth(func):
     client has no `access_token`, this decorator will raise an
     `AuthenticationRequired` exception.
     """
+
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         if not self.access_token:
@@ -26,7 +27,7 @@ def require_auth(func):
 def format_bool(bool_):
     if bool_ is None:
         return bool_
-    return 'true' if bool_ else 'false'
+    return "true" if bool_ else "false"
 
 
 def parse_qs(next_url, param):

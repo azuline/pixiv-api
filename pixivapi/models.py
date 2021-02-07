@@ -242,13 +242,12 @@ class Illustration:
         self.id = id
         self.image_urls = {
             **{Size(s): u for s, u in image_urls.items()},
-            Size.ORIGINAL: meta_single_page.get('original_image_url', None),
+            Size.ORIGINAL: meta_single_page.get("original_image_url", None),
         }
         self.is_bookmarked = is_bookmarked
         self.is_muted = is_muted
         self.meta_pages = [
-            {Size(s): u for s, u in p['image_urls'].items()}
-            for p in meta_pages
+            {Size(s): u for s, u in p["image_urls"].items()} for p in meta_pages
         ]
         self.page_count = page_count
         self.restrict = restrict
@@ -287,14 +286,14 @@ class Illustration:
         :raises PermissionError: If the destination cannot be written to.
         """
         referer = (
-            'https://www.pixiv.net/member_illust.php?mode=medium'
-            f'&illust_id={self.id}'
+            "https://www.pixiv.net/member_illust.php?mode=medium"
+            f"&illust_id={self.id}"
         )
         if self.meta_pages:
             illust_dir = directory / (filename or str(self.id))
             illust_dir.mkdir(parents=True, exist_ok=True)
             for page in self.meta_pages:
-                destination = illust_dir / page[Size.ORIGINAL].split('/')[-1]
+                destination = illust_dir / page[Size.ORIGINAL].split("/")[-1]
                 self.client.download(
                     url=page[size],
                     destination=destination,
@@ -305,7 +304,7 @@ class Illustration:
             directory.mkdir(parents=True, exist_ok=True)
             self.client.download(
                 url=self.image_urls[size],
-                destination=directory / f'{filename or self.id}{ext}',
+                destination=directory / f"{filename or self.id}{ext}",
                 referer=referer,
             )
 
@@ -411,13 +410,17 @@ class Comment:
         self.comment = comment
         self.date = datetime.fromisoformat(date)
         self.id = id
-        self.parent_comment = Comment(
-            comment=parent_comment['comment'],
-            date=parent_comment['date'],
-            id=parent_comment['id'],
-            parent_comment={},
-            user=parent_comment['user'],
-            client=client,
-        ) if parent_comment else None
+        self.parent_comment = (
+            Comment(
+                comment=parent_comment["comment"],
+                date=parent_comment["date"],
+                id=parent_comment["id"],
+                parent_comment={},
+                user=parent_comment["user"],
+                client=client,
+            )
+            if parent_comment
+            else None
+        )
         self.user = User(**user)
         self.client = client

@@ -16,11 +16,4 @@ from pixivapi.errors import (
     LoginError,
     PixivError,
 )
-from pixivapi.models import (
-    Account,
-    Comment,
-    FullUser,
-    Illustration,
-    Novel,
-    User,
-)
+from pixivapi.models import Account, Comment, FullUser, Illustration, Novel, User
