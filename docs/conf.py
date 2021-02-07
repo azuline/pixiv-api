@@ -6,24 +6,24 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath("../"))
 
 
 # -- Project information
 
-project = 'pixiv-api'
-copyright = '2019, azuline'
-author = 'azuline'
-release = '0.3.1'
+project = "pixiv-api"
+copyright = "2021, blissful"
+author = "blissful"
+release = "0.3.7"
 
 # -- General configuration
 
-extensions = ['sphinx.ext.autodoc', 'sphinx_rtd_theme']
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-source_suffix = '.rst'
-master_doc = 'index'
+extensions = ["sphinx.ext.autodoc", "sphinx_rtd_theme"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+source_suffix = ".rst"
+master_doc = "index"
 
 # -- Options for HTML output
 
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
