@@ -21,7 +21,7 @@ def test_require_auth_failure():
 
         @require_auth
         def true(self):
-            return True
+            return True  # pragma: no cover
 
     with pytest.raises(AuthenticationRequired):
         Test().true()
