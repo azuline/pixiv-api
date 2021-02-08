@@ -41,6 +41,9 @@ class User:
         self.profile_image_urls = profile_image_urls
         self.is_followed = is_followed
 
+    def __repr__(self):
+        return f"<User id={self.id} name={self.name}>"
+
 
 class Account(User):
     """
@@ -71,6 +74,9 @@ class Account(User):
         self.is_premium = is_premium
         self.x_restrict = x_restrict
         self.is_mail_authorized = is_mail_authorized
+
+    def __repr__(self):
+        return f"<Account id={self.id} name={self.name}>"
 
 
 class FullUser(User):
@@ -168,6 +174,9 @@ class FullUser(User):
         self.profile = profile
         self.profile_publicity = profile_publicity
         self.workspace = workspace
+
+    def __repr__(self):
+        return f"<FullUser id={self.id} name={self.name}>"
 
 
 class Illustration:
@@ -270,6 +279,9 @@ class Illustration:
         self.x_restrict = x_restrict
         self.client = client
         self.total_comments = total_comments
+
+    def __repr__(self):
+        return f"<Illustration id={self.id} user={self.user.name}>"
 
     def download(self, directory, size=Size.ORIGINAL, filename=None):
         """
@@ -397,6 +409,9 @@ class Novel:
         self.x_restrict = x_restrict
         self.client = client
 
+    def __repr__(self):
+        return f"<Novel id={self.id} user={self.user.name}>"
+
 
 class Comment:
     """
@@ -429,3 +444,6 @@ class Comment:
         )
         self.user = User(**user)
         self.client = client
+
+    def __repr__(self):
+        return f"<Comment id={self.id} user={self.user.name}>"

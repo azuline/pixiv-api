@@ -128,7 +128,10 @@ class Client:
         :raises LoginError: If authentication fails.
         """
         self._make_auth_request(
-            {"grant_type": "refresh_token", "refresh_token": refresh_token}
+            {
+                "grant_type": "refresh_token",
+                "refresh_token": refresh_token,
+            }
         )
 
     def _make_auth_request(self, data):
@@ -140,7 +143,7 @@ class Client:
         )
 
         try:
-            r = self.session.post(
+            response = self.session.post(
                 url=AUTH_URL,
                 data={
                     "client_id": self.client_id,
@@ -154,10 +157,12 @@ class Client:
                         (client_time + LOGIN_SECRET).encode("utf-8")
                     ).hexdigest(),
                 },
-            ).json()
-            self.account = Account(**r["response"]["user"])
-            self.access_token = r["response"]["access_token"]
-            self.refresh_token = r["response"]["refresh_token"]
+            )
+            json_ = response.json()
+
+            self.account = Account(**json_["response"]["user"])
+            self.access_token = json_["response"]["access_token"]
+            self.refresh_token = json_["response"]["refresh_token"]
         except (RequestException, JSONDecodeError, KeyError) as e:
             raise LoginError from e
 

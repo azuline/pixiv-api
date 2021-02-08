@@ -15,18 +15,27 @@ credentials.
 import pytest
 import responses
 
-from pixivapi import Client, LoginError
-from pixivapi.client import AUTH_URL
+from pixivapi import Client, Duration, LoginError
+from pixivapi.client import AUTH_URL, BASE_URL
 from tests import mocked_responses as mr
 
 
 @pytest.fixture
 def client():
+    """For use in post-auth content-related tests."""
+    c = Client()
+    c.access_token = "xxx"
+    return c
+
+
+@pytest.fixture
+def unauthed_client():
+    """For use in authentication-related tests."""
     return Client()
 
 
 @responses.activate
-def test_login_success(client):
+def test_login_success(unauthed_client):
     responses.add(
         responses.POST,
         AUTH_URL,
@@ -34,13 +43,13 @@ def test_login_success(client):
         status=200,
     )
 
-    client.login("bad", "credentials")
-    assert client.account is not None
-    assert client.refresh_token is not None
+    unauthed_client.login("bad", "credentials")
+    assert unauthed_client.account is not None
+    assert unauthed_client.refresh_token is not None
 
 
 @responses.activate
-def test_login_failure(client):
+def test_login_failure(unauthed_client):
     responses.add(
         responses.POST,
         AUTH_URL,
@@ -49,14 +58,14 @@ def test_login_failure(client):
     )
 
     with pytest.raises(LoginError):
-        client.login("bad", "credentials")
+        unauthed_client.login("bad", "credentials")
 
-    assert client.account is None
-    assert client.refresh_token is None
+    assert unauthed_client.account is None
+    assert unauthed_client.refresh_token is None
 
 
 @responses.activate
-def test_authentication_success(client):
+def test_authentication_success(unauthed_client):
     responses.add(
         responses.POST,
         AUTH_URL,
@@ -64,14 +73,14 @@ def test_authentication_success(client):
         status=200,
     )
 
-    client.authenticate("good token")
-    assert client.account is not None
-    assert client.access_token is not None
-    assert client.refresh_token is not None
+    unauthed_client.authenticate("good token")
+    assert unauthed_client.account is not None
+    assert unauthed_client.access_token is not None
+    assert unauthed_client.refresh_token is not None
 
 
 @responses.activate
-def test_authentication_failure(client):
+def test_authentication_failure(unauthed_client):
     responses.add(
         responses.POST,
         AUTH_URL,
@@ -80,8 +89,48 @@ def test_authentication_failure(client):
     )
 
     with pytest.raises(LoginError):
-        client.authenticate("bad token")
+        unauthed_client.authenticate("bad token")
 
-    assert client.account is None
-    assert client.access_token is None
-    assert client.refresh_token is None
+    assert unauthed_client.account is None
+    assert unauthed_client.access_token is None
+    assert unauthed_client.refresh_token is None
+
+
+@responses.activate
+def test_search_illustrations(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/search/illust",
+        json=mr.SEARCH_ILLUSTRATIONS,
+        status=200,
+    )
+
+    snapshot.assert_match(
+        client.search_illustrations("wlop", duration=Duration.LAST_MONTH)
+    )
+
+
+@responses.activate
+def test_fetch_illustration(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/illust/detail",
+        json=mr.FETCH_ILLUSTRATION,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_illustration(86979680))
+
+
+@responses.activate
+def test_fetch_illustration_comments(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/illust/comments",
+        json=mr.FETCH_ILLUSTRATION_COMMENTS,
+        status=200,
+    )
+
+    snapshot.assert_match(
+        client.fetch_illustration_comments(86979680, include_total_comments=True)
+    )
