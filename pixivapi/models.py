@@ -3,9 +3,9 @@ The models package contains dataclasses that wrap entities returned
 from Pixiv's API.
 """
 
-from datetime import datetime
 from os.path import splitext
 
+from pixivapi.common import parse_timestamp
 from pixivapi.enums import ContentType, Size
 
 
@@ -251,7 +251,7 @@ class Illustration:
         total_comments=None,
     ):
         self.caption = caption
-        self.create_date = datetime.strptime(create_date, "%Y-%m-%dT%H:%M:%S%z")
+        self.create_date = parse_timestamp(create_date)
         self.height = height
         self.id = id
         self.image_urls = {
@@ -387,7 +387,7 @@ class Novel:
         client=None,
     ):
         self.caption = caption
-        self.create_date = datetime.strptime(create_date, "%Y-%m-%dT%H:%M:%S%z")
+        self.create_date = parse_timestamp(create_date)
         self.id = id
         self.image_urls = {Size(s): u for s, u in image_urls.items()}
         self.is_bookmarked = is_bookmarked
@@ -428,7 +428,7 @@ class Comment:
 
     def __init__(self, comment, date, id, parent_comment, user, client=None):
         self.comment = comment
-        self.date = datetime.fromisoformat(date)
+        self.date = parse_timestamp(date)
         self.id = id
         self.parent_comment = (
             Comment(

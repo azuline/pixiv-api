@@ -1,4 +1,10 @@
+"""
+The common module contains common utility functions that the rest
+of the library uses.
+"""
+
 import functools
+from datetime import datetime
 from urllib import parse
 
 from pixivapi.errors import AuthenticationRequired
@@ -40,3 +46,15 @@ def parse_qs(next_url, param):
     next_query = parse.urlsplit(next_url).query
     val = dict(parse.parse_qsl(next_query)).get(param, None)
     return int(val) if val else None
+
+
+def parse_timestamp(timestamp):
+    """
+    parse_timestamp parses a timestamp and returns a datetime.
+    """
+    # python 3.6 doesn't support colons in timestamps, but Pixiv's API
+    # returns timestamps with colons.
+    if ":" == timestamp[-3:-2]:
+        timestamp = timestamp[:-3] + timestamp[-2:]
+
+    return datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S%z")
