@@ -34,6 +34,365 @@ snapshots['test_fetch_bookmark 1'] = {
     'visibility': GenericRepr("<Visibility.PUBLIC: 'public'>")
 }
 
+snapshots['test_fetch_followers 1'] = {
+    'next': None,
+    'user_previews': [
+        {
+            'illustrations': [
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=11111111 name=User1>')
+        },
+        {
+            'illustrations': [
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=22222222 name=User2>')
+        }
+    ]
+}
+
+snapshots['test_fetch_following 1'] = {
+    'next': 30,
+    'user_previews': [
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=78836488 user=千>'),
+                GenericRepr('<Illustration id=78709721 user=千>'),
+                GenericRepr('<Illustration id=64253519 user=千>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=14936402 name=千>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87555678 user=nonokuro>'),
+                GenericRepr('<Illustration id=87488330 user=nonokuro>'),
+                GenericRepr('<Illustration id=85900987 user=nonokuro>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=14544133 name=nonokuro>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=79221516 user=郵>'),
+                GenericRepr('<Illustration id=78022277 user=郵>'),
+                GenericRepr('<Illustration id=76747694 user=郵>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=265590 name=郵>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=84625904 user=なんこ>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=22688361 name=なんこ>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=85711595 user=Renos>'),
+                GenericRepr('<Illustration id=84188262 user=Renos>'),
+                GenericRepr('<Illustration id=82788314 user=Renos>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=799177 name=Renos>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86782351 user=漫画素材工房>'),
+                GenericRepr('<Illustration id=86521567 user=漫画素材工房>'),
+                GenericRepr('<Illustration id=86465969 user=漫画素材工房>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=16776564 name=漫画素材工房>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86278270 user=零＠通販始めた>'),
+                GenericRepr('<Illustration id=84215645 user=零＠通販始めた>'),
+                GenericRepr('<Illustration id=83523673 user=零＠通販始めた>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=74184 name=零＠通販始めた>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=66817374 user=ジョー>'),
+                GenericRepr('<Illustration id=63542628 user=ジョー>'),
+                GenericRepr('<Illustration id=63500646 user=ジョー>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=24976253 name=ジョー>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87479619 user=ともわか>'),
+                GenericRepr('<Illustration id=87479609 user=ともわか>'),
+                GenericRepr('<Illustration id=87377158 user=ともわか>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=2733167 name=ともわか>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87597736 user=toshi>'),
+                GenericRepr('<Illustration id=87349228 user=toshi>'),
+                GenericRepr('<Illustration id=87324862 user=toshi>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=637016 name=toshi>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87188253 user=HxxG / ホン>'),
+                GenericRepr('<Illustration id=87053374 user=HxxG / ホン>'),
+                GenericRepr('<Illustration id=86055915 user=HxxG / ホン>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=1193139 name=HxxG / ホン>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87504129 user=siki>'),
+                GenericRepr('<Illustration id=85602057 user=siki>'),
+                GenericRepr('<Illustration id=85503899 user=siki>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=6558698 name=siki>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=85180824 user=织布机loom>'),
+                GenericRepr('<Illustration id=84049530 user=织布机loom>'),
+                GenericRepr('<Illustration id=82831794 user=织布机loom>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=13695413 name=织布机loom>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87314047 user=ごとー🌱>'),
+                GenericRepr('<Illustration id=87033380 user=ごとー🌱>'),
+                GenericRepr('<Illustration id=86992778 user=ごとー🌱>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=2956783 name=ごとー🌱>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87583225 user=SH>'),
+                GenericRepr('<Illustration id=86873466 user=SH>'),
+                GenericRepr('<Illustration id=86143934 user=SH>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=2865617 name=SH>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86683212 user=中山>'),
+                GenericRepr('<Illustration id=84543085 user=中山>'),
+                GenericRepr('<Illustration id=83720988 user=中山>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=54851546 name=中山>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86053040 user=☺︎>'),
+                GenericRepr('<Illustration id=85920000 user=☺︎>'),
+                GenericRepr('<Illustration id=84392796 user=☺︎>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=9544495 name=☺︎>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=85423051 user=￦ANKE>'),
+                GenericRepr('<Illustration id=85372147 user=￦ANKE>'),
+                GenericRepr('<Illustration id=84811237 user=￦ANKE>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=24218478 name=￦ANKE>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87356221 user=ㅤ>'),
+                GenericRepr('<Illustration id=86955669 user=ㅤ>'),
+                GenericRepr('<Illustration id=86650553 user=ㅤ>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=1079073 name=ㅤ>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86464612 user=YD>'),
+                GenericRepr('<Illustration id=86343645 user=YD>'),
+                GenericRepr('<Illustration id=86221471 user=YD>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=853087 name=YD>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=84504000 user=モ誰>'),
+                GenericRepr('<Illustration id=84210175 user=モ誰>'),
+                GenericRepr('<Illustration id=83176771 user=モ誰>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=1878082 name=モ誰>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=79322467 user=mimo>'),
+                GenericRepr('<Illustration id=74445409 user=mimo>'),
+                GenericRepr('<Illustration id=74075737 user=mimo>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=29811192 name=mimo>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=82510919 user=NaO>'),
+                GenericRepr('<Illustration id=82040117 user=NaO>'),
+                GenericRepr('<Illustration id=81862923 user=NaO>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=41431583 name=NaO>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86881847 user=へちま>'),
+                GenericRepr('<Illustration id=86881826 user=へちま>'),
+                GenericRepr('<Illustration id=82847277 user=へちま>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=1069005 name=へちま>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=85819570 user=咲良ゆき /사쿠라 유키>'),
+                GenericRepr('<Illustration id=84259303 user=咲良ゆき /사쿠라 유키>'),
+                GenericRepr('<Illustration id=83950549 user=咲良ゆき /사쿠라 유키>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=1661253 name=咲良ゆき /사쿠라 유키>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=87326569 user=EB十>'),
+                GenericRepr('<Illustration id=87033406 user=EB十>'),
+                GenericRepr('<Illustration id=86871412 user=EB十>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=2345928 name=EB十>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=81095945 user=一只水饺>'),
+                GenericRepr('<Illustration id=80589712 user=一只水饺>'),
+                GenericRepr('<Illustration id=80585824 user=一只水饺>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=50258200 name=一只水饺>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86690745 user=おおむね鶴川>'),
+                GenericRepr('<Illustration id=82584816 user=おおむね鶴川>'),
+                GenericRepr('<Illustration id=81301190 user=おおむね鶴川>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=42926072 name=おおむね鶴川>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86959403 user=たくぼん@お仕事募集中>'),
+                GenericRepr('<Illustration id=86857256 user=たくぼん@お仕事募集中>'),
+                GenericRepr('<Illustration id=86410354 user=たくぼん@お仕事募集中>')
+            ],
+            'is_muted': False,
+            'novels': [
+            ],
+            'user': GenericRepr('<User id=23030728 name=たくぼん@お仕事募集中>')
+        },
+        {
+            'illustrations': [
+                GenericRepr('<Illustration id=86843753 user=あいだ>'),
+                GenericRepr('<Illustration id=85668529 user=あいだ>'),
+                GenericRepr('<Illustration id=85546694 user=あいだ>')
+            ],
+            'is_muted': False,
+            'novels': [
+                GenericRepr('<Novel id=14620056 user=あいだ>'),
+                GenericRepr('<Novel id=14558775 user=あいだ>'),
+                GenericRepr('<Novel id=14508049 user=あいだ>')
+            ],
+            'user': GenericRepr('<User id=8966556 name=あいだ>')
+        }
+    ]
+}
+
 snapshots['test_fetch_illustration 1'] = GenericRepr('<Illustration id=86979680 user=wlop>')
 
 snapshots['test_fetch_illustration_comments 1'] = {
@@ -313,6 +672,177 @@ snapshots['test_fetch_trending_tags 1'] = [
         'translated_name': 'animal ears'
     }
 ]
+
+snapshots['test_fetch_user 1'] = GenericRepr('<FullUser id=2188232 name=wlop>')
+
+snapshots['test_fetch_user_bookmark_tags 1'] = {
+    'bookmark_tags': [
+        {
+            'count': 3,
+            'name': '9S'
+        },
+        {
+            'count': 1,
+            'name': 'CLIPSTUDIOPAINT'
+        },
+        {
+            'count': 2,
+            'name': 'FGO'
+        },
+        {
+            'count': 1,
+            'name': 'FLCL'
+        },
+        {
+            'count': 3,
+            'name': 'Fate'
+        },
+        {
+            'count': 4,
+            'name': 'Fate/GrandOrder'
+        },
+        {
+            'count': 1,
+            'name': 'Free!'
+        },
+        {
+            'count': 155,
+            'name': 'HANDYMONSTERS'
+        },
+        {
+            'count': 1,
+            'name': 'ICO'
+        },
+        {
+            'count': 1,
+            'name': 'ID:INVADED'
+        },
+        {
+            'count': 4,
+            'name': 'MOTHER'
+        },
+        {
+            'count': 1,
+            'name': 'MOTHER2'
+        },
+        {
+            'count': 4,
+            'name': 'MOTHER3'
+        },
+        {
+            'count': 6,
+            'name': 'NieR:Automata'
+        },
+        {
+            'count': 1,
+            'name': 'Perfume'
+        },
+        {
+            'count': 1,
+            'name': 'RO'
+        },
+        {
+            'count': 2,
+            'name': 'Re:ゼロから始める異世界生活'
+        },
+        {
+            'count': 2,
+            'name': 'SIREN'
+        },
+        {
+            'count': 10,
+            'name': 'Splatoon'
+        },
+        {
+            'count': 1,
+            'name': 'Undertale'
+        },
+        {
+            'count': 40,
+            'name': 'VOCALOID'
+        },
+        {
+            'count': 41,
+            'name': 'YOI【腐】'
+        },
+        {
+            'count': 4,
+            'name': 'mother3'
+        },
+        {
+            'count': 1,
+            'name': 'splatoon'
+        },
+        {
+            'count': 3,
+            'name': '★魚'
+        },
+        {
+            'count': 1,
+            'name': 'あんさん腐るスターズ!'
+        },
+        {
+            'count': 1,
+            'name': 'うごイラ'
+        },
+        {
+            'count': 1,
+            'name': 'きんいろモザイク'
+        },
+        {
+            'count': 6,
+            'name': 'けものフレンズ'
+        },
+        {
+            'count': 1,
+            'name': 'ご注文はうさぎですか?'
+        }
+    ],
+    'next': 30
+}
+
+snapshots['test_fetch_user_bookmarks 1'] = {
+    'illustrations': [
+        GenericRepr('<Illustration id=54798429 user=ひでこ>')
+    ],
+    'next': None
+}
+
+snapshots['test_fetch_user_illustrations 1'] = {
+    'illustrations': [
+        GenericRepr('<Illustration id=87492458 user=wlop>'),
+        GenericRepr('<Illustration id=87180953 user=wlop>'),
+        GenericRepr('<Illustration id=86979680 user=wlop>'),
+        GenericRepr('<Illustration id=86454354 user=wlop>'),
+        GenericRepr('<Illustration id=86261514 user=wlop>'),
+        GenericRepr('<Illustration id=86248394 user=wlop>'),
+        GenericRepr('<Illustration id=86044539 user=wlop>'),
+        GenericRepr('<Illustration id=83492653 user=wlop>'),
+        GenericRepr('<Illustration id=83471825 user=wlop>'),
+        GenericRepr('<Illustration id=83451391 user=wlop>'),
+        GenericRepr('<Illustration id=83431165 user=wlop>'),
+        GenericRepr('<Illustration id=83409040 user=wlop>'),
+        GenericRepr('<Illustration id=83380879 user=wlop>'),
+        GenericRepr('<Illustration id=83222944 user=wlop>'),
+        GenericRepr('<Illustration id=83222943 user=wlop>'),
+        GenericRepr('<Illustration id=83197731 user=wlop>'),
+        GenericRepr('<Illustration id=83173860 user=wlop>'),
+        GenericRepr('<Illustration id=83150157 user=wlop>'),
+        GenericRepr('<Illustration id=83129810 user=wlop>'),
+        GenericRepr('<Illustration id=83109676 user=wlop>'),
+        GenericRepr('<Illustration id=80096963 user=wlop>'),
+        GenericRepr('<Illustration id=75523989 user=wlop>'),
+        GenericRepr('<Illustration id=75508638 user=wlop>'),
+        GenericRepr('<Illustration id=74503110 user=wlop>'),
+        GenericRepr('<Illustration id=74502130 user=wlop>'),
+        GenericRepr('<Illustration id=73755434 user=wlop>'),
+        GenericRepr('<Illustration id=73165062 user=wlop>'),
+        GenericRepr('<Illustration id=73042381 user=wlop>'),
+        GenericRepr('<Illustration id=72596225 user=wlop>'),
+        GenericRepr('<Illustration id=72461417 user=wlop>')
+    ],
+    'next': 30
+}
 
 snapshots['test_search_illustrations 1'] = {
     'illustrations': [

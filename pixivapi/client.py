@@ -77,6 +77,7 @@ class Client:
                 raise BadApiResponse(
                     f"Status code: {response.status_code}", response.text
                 )
+
             return response.json()
         except JSONDecodeError as e:
             raise BadApiResponse from e
@@ -474,8 +475,8 @@ class Client:
     @require_auth
     def fetch_illustrations_ranking(self, mode=RankingMode.DAY, date=None, offset=None):
         """
-        Fetch the ranking illustrations. A maximum of TODO are returned
-        in one response.
+        Fetch the ranking illustrations. A maximum of 30 illusrations are
+        returned in one response.
 
         :param RankingMode mode: The ranking list to fetch.
         :param str date: The date of the list, in ``%Y-%m-%d`` format.
@@ -595,12 +596,12 @@ class Client:
         }
 
     @require_auth
-    def add_bookmark(  # pragma: no cover
+    def add_bookmark(
         self,
         illustration_id,
         visibility=Visibility.PUBLIC,
         tags=None,
-    ):
+    ):  # pragma: no cover
         """
         Bookmark an illustration.
 
@@ -663,7 +664,10 @@ class Client:
 
     @require_auth
     def fetch_user_illustrations(
-        self, user_id, content_type=ContentType.ILLUSTRATION, offset=None
+        self,
+        user_id,
+        content_type=ContentType.ILLUSTRATION,
+        offset=None,
     ):
         """
         Fetch the illustrations posted by a user.
@@ -716,7 +720,7 @@ class Client:
         tag=None,
     ):
         """
-        Fetch the illustrations bookmarked by a user. A maximum of TODO
+        Fetch the illustrations bookmarked by a user. A maximum of 30
         illustrations are returned in a response.
 
         :param int user_id: The ID of the user.
@@ -766,7 +770,10 @@ class Client:
 
     @require_auth
     def fetch_user_bookmark_tags(
-        self, user_id, visibility=Visibility.PUBLIC, offset=None
+        self,
+        user_id,
+        visibility=Visibility.PUBLIC,
+        offset=None,
     ):
         """
         Fetch the bookmark tags that belong to the user. A maximum of

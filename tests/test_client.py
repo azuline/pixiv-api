@@ -206,3 +206,75 @@ def test_fetch_bookmark(client, snapshot):
     )
 
     snapshot.assert_match(client.fetch_bookmark(86044539))
+
+
+@responses.activate
+def test_fetch_user(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/user/detail",
+        json=mr.FETCH_USER,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_user(2188232))
+
+
+@responses.activate
+def test_fetch_user_illustrations(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/user/illusts",
+        json=mr.FETCH_USER_ILLUSTRATIONS,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_user_illustrations(2188232))
+
+
+@responses.activate
+def test_fetch_user_bookmarks(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/user/bookmarks/illust",
+        json=mr.FETCH_USER_BOOKMARKS,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_user_bookmarks(126852))
+
+
+@responses.activate
+def test_fetch_user_bookmark_tags(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/user/bookmark-tags/illust",
+        json=mr.FETCH_USER_BOOKMARK_TAGS,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_user_bookmark_tags(126852))
+
+
+@responses.activate
+def test_fetch_following(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/user/following",
+        json=mr.FETCH_FOLLOWING,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_following(126852))
+
+
+@responses.activate
+def test_fetch_followers(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/user/follower",
+        json=mr.FETCH_FOLLOWERS,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_followers())
