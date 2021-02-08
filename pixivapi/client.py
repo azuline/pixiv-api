@@ -28,14 +28,12 @@ class Client:
     A client for the Pixiv API.
 
     :ivar str language: The language tag translations should be in.
-    :ivar str client_id: The client ID. Typically, leaving this as
-        default is ok.
-    :ivar str client_secret: The client secret. Typically, leaving
-        this as default is ok.
+    :ivar str client_id: The client ID. Typically, leaving this as default is ok.
+    :ivar str client_secret: The client secret. Typically, leaving this as default is
+        ok.
     :ivar Account account: Basic details of the logged in account.
     :ivar str access_token: The access token used to authorize requests.
-    :ivar str refresh_token: The refresh token used to obtain new access
-        tokens.
+    :ivar str refresh_token: The refresh token used to obtain new access tokens.
     :ivar requests.Session session: The requests session.
     """
 
@@ -84,15 +82,14 @@ class Client:
 
     def download(self, url, destination, referer="https://pixiv.net"):
         """
-        Download a file to a given destination. This method uses
-        the client's access token if available.
+        Download a file to a given destination. This method uses the client's access
+        token if available.
 
-        :param str url:     The URL of the file.
+        :param str url: The URL of the file.
         :param destination: The destination file. Must be writeable.
         :param str referer: The Referer header.
 
-        :raises FileNotFoundError: If the destination's directory does
-            not exist.
+        :raises FileNotFoundError: If the destination's directory does not exist.
         :raises PermissionError: If the destination cannot be written to.
         """
         response = self.session.get(url=url, headers={"Referer": referer}, stream=True)
@@ -103,8 +100,8 @@ class Client:
 
     def login(self, username, password):
         """
-        Log in with username and password to fetch an access token
-        and a refresh token. Assigns the tokens to instance variables.
+        Log in with username and password to fetch an access token and a refresh token.
+        Assigns the tokens to instance variables.
 
         :param str username: Your username.
         :param str password: Your password.
@@ -121,8 +118,8 @@ class Client:
 
     def authenticate(self, refresh_token):
         """
-        Use a refresh token to obtain a new access token. Assigns
-        both tokens to instance variables.
+        Use a refresh token to obtain a new access token. Assigns both tokens to
+        instance variables.
 
         :param str refresh_token: The refresh token.
 
@@ -179,8 +176,8 @@ class Client:
         offset=None,
     ):
         """
-        Search the illustrations. A maximum of 30 illustrations are
-        returned in one response.
+        Search the illustrations. A maximum of 30 illustrations are returned in one
+        response.
 
         :param str word: The search term.
         :param SearchTarget search_target: The target for the search term.
@@ -188,9 +185,9 @@ class Client:
         :param Duration duration: An optional max-age for the illustrations.
         :param int offset: The number of illustrations to offset by.
 
-        :return: A dictionary containing the searched illustrations, the
-            offset for the next page of search images (``None`` if there
-            is no next page), and the search span limit.
+        :return: A dictionary containing the searched illustrations, the offset for the
+            next page of search images (``None`` if there is no next page), and the
+            search span limit.
 
         .. code-block:: python
 
@@ -253,22 +250,21 @@ class Client:
         self, illustration_id, offset=None, include_total_comments=False
     ):
         """
-        Fetch the comments of an illustration. A maximum of 30 comments
-        are returned in one response.
+        Fetch the comments of an illustration. A maximum of 30 comments are returned in
+        one response.
 
-        **Note:** The ``total_comments`` key does not equal the number
-        of comments that will be returned by the API. If requesting all
-        the comments, use the ``next`` key to determine whether or not
-        to continue, not the ``total_comments`` key.
+        **Note:** The ``total_comments`` key does not equal the number of comments that
+        will be returned by the API. If requesting all the comments, use the ``next``
+        key to determine whether or not to continue, not the ``total_comments`` key.
 
         :param int illustration_id: ID of the illustration.
         :param int offset: Number of comments to offset by.
-        :param bool include_total_comments: Whether or not to include a
-            the total number of comments on the illustration. If set to
-            False, the ``total_comments`` key in the response will be ``0``.
+        :param bool include_total_comments: Whether or not to include a the total number
+            of comments on the illustration. If set to False, the ``total_comments`` key
+            in the response will be ``0``.
 
-        :return: A dictionary containing the comments, the offset for the
-            next page of comments, and the total number of comments.
+        :return: A dictionary containing the comments, the offset for the next page of
+            comments, and the total number of comments.
 
         .. code-block:: python
 
@@ -304,14 +300,14 @@ class Client:
     @require_auth
     def fetch_illustration_related(self, illustration_id, offset=None):
         """
-        Fetch illustrations related to a specified illustration. A
-        maximum of 30 illustrations are returned in one response.
+        Fetch illustrations related to a specified illustration. A maximum of 30
+        illustrations are returned in one response.
 
         :param int illustration_id: ID of the illustration.
         :param int offset: Illustrations to offset by.
 
-        :return: A dictionary containing the related illustrations and
-            the offset for the next page of illustrations.
+        :return: A dictionary containing the related illustrations and the offset for
+        the next page of illustrations.
 
         .. code-block:: python
 
@@ -341,15 +337,15 @@ class Client:
     @require_auth
     def fetch_illustrations_following(self, visibility=Visibility.PUBLIC, offset=None):
         """
-        Fetch new illustrations from followed artists. A maximum of 30
-        illustrations are returned in one response.
+        Fetch new illustrations from followed artists. A maximum of 30 illustrations are
+        returned in one response.
 
-        :param Visibility visibility: Visibility of the followed artist;
-            ``PUBLIC`` if publicly followed; ``PRIVATE`` if privately.
+        :param Visibility visibility: Visibility of the followed artist; ``PUBLIC`` if
+            publicly followed; ``PRIVATE`` if privately.
         :param int offset: The number of illustrations to offset by.
 
-        :return: A dictionary containing the new illustrations and
-            the offset for the next page of illustrations.
+        :return: A dictionary containing the new illustrations and the offset for the
+            next page of illustrations.
 
         .. code-block:: python
 
@@ -390,25 +386,21 @@ class Client:
         """
         Fetch one's recommended illustrations.
 
-        :param ContentType content_type: The type of content to fetch.
-            Accepts ``ILLUSTRATION`` and ``MANGA``.
-        :param bool include_ranking_illustrations: If ``True``, the top
-            10 ranked illustrations daily are included in the response.
-            If False, the ``ranking_illustrations`` key in the response
-            dict will be empty.
-        :param int max_bookmark_id_for_recommend: The maximum bookmark
-            ID for recommended illustrations, used for changing the
-            returned illustrations.
-        :param int min_bookmark_id_for_recent_illustrations: The minimum
-            bookmark ID for recent illustrations, used for changing
-            the returned illustrations.
+        :param ContentType content_type: The type of content to fetch. Accepts
+            ``ILLUSTRATION`` and ``MANGA``.
+        :param bool include_ranking_illustrations: If ``True``, the top 10 ranked
+            illustrations daily are included in the response. If False, the
+            ``ranking_illustrations`` key in the response dict will be empty.
+        :param int max_bookmark_id_for_recommend: The maximum bookmark ID for
+            recommended illustrations, used for changing the returned illustrations.
+        :param int min_bookmark_id_for_recent_illustrations: The minimum bookmark ID for
+            recent illustrations, used for changing the returned illustrations.
         :param int offset: The number of illustrations to offset by.
         :param list bookmark_illust_ids: A list of illustration IDs.
-        :param bool include_ranking_label: Whether or not to include
-            the ranking label.
+        :param bool include_ranking_label: Whether or not to include the ranking label.
 
-        :return: A dictionary containing the recommended illustrations and
-            the parameters for the next page of illustrations.
+        :return: A dictionary containing the recommended illustrations and the
+            parameters for the next page of illustrations.
 
         .. code-block:: python
 
@@ -475,15 +467,15 @@ class Client:
     @require_auth
     def fetch_illustrations_ranking(self, mode=RankingMode.DAY, date=None, offset=None):
         """
-        Fetch the ranking illustrations. A maximum of 30 illusrations are
-        returned in one response.
+        Fetch the ranking illustrations. A maximum of 30 illusrations are returned in
+        one response.
 
         :param RankingMode mode: The ranking list to fetch.
         :param str date: The date of the list, in ``%Y-%m-%d`` format.
         :param int offset: The number of illustrations to offset by.
 
-        :return: A dictionary containing the ranking illustrations and
-            the offset for the next page of illustrations.
+        :return: A dictionary containing the ranking illustrations and the offset for
+            the next page of illustrations.
 
         .. code-block:: python
 
@@ -520,8 +512,8 @@ class Client:
         """
         Fetch trending illustrations and tags.
 
-        :return: A list of dicts containing an illustration, the
-            tag name, and the tag translation.
+        :return: A list of dicts containing an illustration, the tag name, and the tag
+            translation.
 
         .. code-block:: python
 
@@ -561,8 +553,8 @@ class Client:
 
         :param int illustration_id: The ID of the bookmarked illustration.
 
-        :return: A dictionary containing whether or not the illustration is
-            bookmarked, the visibility of the bookmark, and a list of tags.
+        :return: A dictionary containing whether or not the illustration is bookmarked,
+            the visibility of the bookmark, and a list of tags.
 
         .. code-block:: python
 
@@ -677,9 +669,9 @@ class Client:
             ``ILLUSTRATION`` and ``MANGA``.
         :param int offset: The number of illustrations/manga to offset by.
 
-        :return: A dictionary containing the user's illustrations and the
-            offset to get the next page of their illustrations. If there
-            is no next page, ``offset`` will be ``None``.
+        :return: A dictionary containing the user's illustrations and the offset to get
+            the next page of their illustrations. If there is no next page, ``offset``
+            will be ``None``.
 
         .. code-block:: python
 
@@ -720,18 +712,17 @@ class Client:
         tag=None,
     ):
         """
-        Fetch the illustrations bookmarked by a user. A maximum of 30
-        illustrations are returned in a response.
+        Fetch the illustrations bookmarked by a user. A maximum of 30 illustrations are
+        returned in a response.
 
         :param int user_id: The ID of the user.
-        :param Visibility visibility: The visibility of the bookmarks.
-            Applies only to requests for one's own bookmarks. If set to
-            ``Visibility.PRIVATE`` for another user, their public bookmarks
-            will be returned.
-        :param int max_bookmark_id: The ID of the maximum bookmark,
-            similar to ``offset`` for other endpoints.
-        :param str tag: The bookmark tag to filter bookmarks by. These tags
-            can be fetched from ``Client.fetch_user_bookmark_tags``.
+        :param Visibility visibility: The visibility of the bookmarks. Applies only to
+            requests for one's own bookmarks. If set to ``Visibility.PRIVATE`` for
+            another user, their public bookmarks will be returned.
+        :param int max_bookmark_id: The ID of the maximum bookmark, similar to
+            ``offset`` for other endpoints.
+        :param str tag: The bookmark tag to filter bookmarks by. These tags can be
+            fetched from ``Client.fetch_user_bookmark_tags``.
 
         :return: A dictionary containing the user's bookmarks and the
             max_bookmark_id needed to get the next page of their
@@ -776,20 +767,17 @@ class Client:
         offset=None,
     ):
         """
-        Fetch the bookmark tags that belong to the user. A maximum of
-        30 tags are returned in a response.
+        Fetch the bookmark tags that belong to the user. A maximum of 30 tags are
+        returned in a response.
 
-        :param int user_id: The ID of the user whose bookmark tags
-            to fetch.
-        :param Visibility visibility: The visibility of the tags.
-            Will raise an error if another user's private tags are
-            requested.
+        :param int user_id: The ID of the user whose bookmark tags to fetch.
+        :param Visibility visibility: The visibility of the tags. Will raise an error if
+            another user's private tags are requested.
         :param int offset: The number of tags to offset by.
 
-        :return: A dictionary containing the user's bookmark tags
-            and the offset needed to get the next page of their
-            bookmark tags. If there is no next page, ``offset``
-            will be ``None``.
+        :return: A dictionary containing the user's bookmark tags and the offset needed
+            to get the next page of their bookmark tags. If there is no next page,
+            ``offset`` will be ``None``.
 
         .. code-block:: python
 
@@ -807,8 +795,8 @@ class Client:
         :rtype: dict
 
         :raises requests.RequestException: If the request fails.
-        :raises BadApiResponse: If the response is not valid JSON or if
-            another user's private tags are requested.
+        :raises BadApiResponse: If the response is not valid JSON or if another user's
+            private tags are requested.
         """
         response = self._request_json(
             method="get",
@@ -828,20 +816,18 @@ class Client:
     @require_auth
     def fetch_following(self, user_id, visibility=Visibility.PUBLIC, offset=None):
         """
-        Fetch the users that a user is following. A maximum of 30
-        users are returned in a response.
+        Fetch the users that a user is following. A maximum of 30 users are returned in
+        a response.
 
         :param int user_id: The ID of the user.
-        :param Visibility visibility: The visibility of the followed
-            users. Applies only to one's own follows. If
-            ``Visibility.PRIVATE`` is applied to another user, their
-            publicly followed users will be returned.
+        :param Visibility visibility: The visibility of the followed users. Applies only
+            to one's own follows. If ``Visibility.PRIVATE`` is applied to another user,
+            their publicly followed users will be returned.
         :param int offset: The number of users to offset by.
 
-        :return: A dictionary containing the a list of previews for
-            the followed users and and the offset needed to get the
-            next page of user previews. If there is no next page,
-            ``offset`` will be ``None``.
+        :return: A dictionary containing the a list of previews for the followed users
+            and and the offset needed to get the next page of user previews. If there is
+            no next page, ``offset`` will be ``None``.
 
         .. code-block:: python
 
@@ -906,10 +892,10 @@ class Client:
 
         :param int offset: The number of users to offset by.
 
-        :return: A dictionary containing the a list of previews for
-            the users that follow the the requesting user and and the
-            offset needed to get the next page of user previews. If
-            there is no next page, ``offset`` will be ``None``.
+        :return: A dictionary containing the a list of previews for the users that
+            follow the the requesting user and and the offset needed to get the next
+            page of user previews. If there is no next page, ``offset`` will be
+            ``None``.
 
         .. code-block:: python
 

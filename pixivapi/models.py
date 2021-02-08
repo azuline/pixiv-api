@@ -11,20 +11,18 @@ from pixivapi.enums import ContentType, Size
 
 class User:
     """
-    A model that represents a user. Not all instance variables
-    will be populated; the variables that are populated depends
-    on the endpoint that the user is fetched from.
+    A model that represents a user. Not all instance variables will be populated; the
+    variables that are populated depends on the endpoint that the user is fetched from.
 
-    Typically, the ``profile_image_urls`` dict will contain a ``'medium'``
-    key.
+    Typically, the ``profile_image_urls`` dict will contain a ``'medium'`` key.
 
     :ivar str account: Their account name
     :ivar int id: Their account ID
     :ivar str name: Their display name
-    :ivar dict profile_image_urls: A dictionary of URLs for their profile
-        image. The keys are the size and the value is the URL.
-    :ivar bool is_followed: If the user is followed. If the endpoint
-        does not return this (e.g. comments), it will be ``None``.
+    :ivar dict profile_image_urls: A dictionary of URLs for their profile image. The
+        keys are the size and the value is the URL.
+    :ivar bool is_followed: If the user is followed. If the endpoint does not return
+        this (e.g. comments), it will be ``None``.
     """
 
     def __init__(
@@ -47,8 +45,8 @@ class User:
 
 class Account(User):
     """
-    A model for the authenticating user that inherits from ``User``.
-    The properties present in the ``User`` model are also present here.
+    A model for the authenticating user that inherits from ``User``. The properties
+        present in the ``User`` model are also present here.
 
     The profile images have the sizes 16x16, 50x50, 170x170.
 
@@ -83,10 +81,10 @@ class FullUser(User):
     """
     This model inherits the properties that the ``User`` model has.
 
-    :ivar str comment: The comment on the user's account. Only provided
-        when fetching user via ``Client.fetch_user``.
-    :ivar dict profile: Profile information fetched from the
-        ``Client.fetch_user`` endpoint. Example below.
+    :ivar str comment: The comment on the user's account. Only provided when fetching
+        user via ``Client.fetch_user``.
+    :ivar dict profile: Profile information fetched from the ``Client.fetch_user``
+        endpoint. Example below.
 
         .. code-block:: python
 
@@ -119,9 +117,9 @@ class FullUser(User):
                'webpage': 'https://webpage.com'
            }
 
-    :ivar dict profile_publicity: A dictionary detailling which parts
-        of the user's profile are public and which are private. Only
-        provided from the ``Client.fetch_user`` endpoint. Example below.
+    :ivar dict profile_publicity: A dictionary detailling which parts of the user's
+        profile are public and which are private. Only provided from the
+        ``Client.fetch_user`` endpoint. Example below.
 
         .. code-block:: python
 
@@ -134,9 +132,8 @@ class FullUser(User):
                'region': 'public'
            }
 
-    :ivar dict workspace: A dictionary containing information about the
-        user's workspace. Only provided from the ``Client.fetch_user``
-        endpoint. Example below.
+    :ivar dict workspace: A dictionary containing information about the user's
+        workspace. Only provided from the ``Client.fetch_user`` endpoint. Example below.
 
         .. code-block:: python
 
@@ -181,34 +178,31 @@ class FullUser(User):
 
 class Illustration:
     """
-    The illustration models encapsulates an illustration and provides
-    methods for convenient fetching of related objects.
+    The illustration models encapsulates an illustration and provides methods for
+    convenient fetching of related objects.
 
     :ivar str caption: Caption
     :ivar datetime.datetime create_date: Creation date
     :ivar int height: Height
     :ivar int id: ID
-    :ivar dict image_urls: A dict of Image URLs mapping the Size enum
-        to the URL. If the image has multiple pages, `Size.ORIGINAL`
-        will be None.
+    :ivar dict image_urls: A dict of Image URLs mapping the Size enum to the URL. If the
+        image has multiple pages, `Size.ORIGINAL` will be None.
     :ivar bool is_bookmarked: If the image is bookmarked.
     :ivar bool is_muted: If the image is muted.
-    :ivar list meta_pages: If the image has multiple
-        images, list this will be a list of dicts mapping the Size
-        enum to image urls. If not, this will be an empty list.
+    :ivar list meta_pages: If the image has multiple images, list this will be a list of
+        dicts mapping the Size enum to image urls. If not, this will be an empty list.
     :ivar int page_count: The number of pages.
     :ivar int restrict: The restriction.
     :ivar int sanity_level: The sanity level.
-    :ivar series: If the illustration is in a series, this will be a dict
-        with the ``id`` and ``title`` key/value pairs of the series.
-        If the illustration is not in a series, this will be ``None``.
-    :ivar list tags: A list of dicts containing two keys: ``name``
-        and ``translated_name``. The ``translated_name`` will be
-        ``None`` if the client language is not set.
+    :ivar series: If the illustration is in a series, this will be a dict with the
+        ``id`` and ``title`` key/value pairs of the series. If the illustration is not
+        in a series, this will be ``None``.
+    :ivar list tags: A list of dicts containing two keys: ``name`` and
+        ``translated_name``. The ``translated_name`` will be ``None`` if the client
+        language is not set.
     :ivar str title: The title of the work.
     :ivar list tools: The listed tools used to create the illustration.
-    :ivar int total_bookmarks: The number of times the illustration has
-        been bookmarked.
+    :ivar int total_bookmarks: The number of times the illustration has been bookmarked.
     :ivar int total_view: The number of times the illustration has been viewed.
     :ivar ContentType type: The content type (illustration, manga).
     :ivar User user: The artist of the image.
@@ -216,10 +210,9 @@ class Illustration:
     :ivar int width: The width of the illustration.
     :ivar int x_restrict: The x restrict.
     :ivar Client client: The client used to fetch the image information.
-    :ivar int total_comments: The total number of comments on the illustration.
-        This value may be ``None`` depending on which method this illustration
-        was fetched from. For example, this value is not returned when
-        searching illustrations.
+    :ivar int total_comments: The total number of comments on the illustration. This
+        value may be ``None`` depending on which method this illustration was fetched
+        from. For example, this value is not returned when searching illustrations.
     """
 
     def __init__(
@@ -285,21 +278,18 @@ class Illustration:
 
     def download(self, directory, size=Size.ORIGINAL, filename=None):
         """
-        Download the illustration to the desired directory. If the
-        illustration has multiple pages, a folder will be created and
-        the images placed inside.
+        Download the illustration to the desired directory. If the illustration has
+        multiple pages, a folder will be created and the images placed inside.
 
-        :param pathlib.Path directory: The illustration will be downloaded
-            to this directory.
+        :param pathlib.Path directory: The illustration will be downloaded to this
+            directory.
         :param Size size: The size of the image to download.
-        :param filename: Do not include the file extension. This will be
-            the filename of a single-page illustration and the folder name
-            of a multi-page illustration. By default this will be the
-            ID of the illustration.
+        :param filename: Do not include the file extension. This will be the filename of
+            a single-page illustration and the folder name of a multi-page illustration.
+            By default this will be the ID of the illustration.
 
         :raises requests.RequestException: If the request fails.
-        :raises FileNotFoundError: If the destination's directory does
-            not exist.
+        :raises FileNotFoundError: If the destination's directory does not exist.
         :raises PermissionError: If the destination cannot be written to.
         """
         referer = (
@@ -333,8 +323,8 @@ class Novel:
     :ivar str caption: Caption
     :ivar datetime.datetime create_date: Creation date
     :ivar int id: ID
-    :ivar dict image_urls: A dict of Image URLs mapping the Size enum
-        to the URL. There is no ``Size.ORIGINAL``.
+    :ivar dict image_urls: A dict of Image URLs mapping the Size enum to the URL. There
+        is no ``Size.ORIGINAL``.
     :ivar bool is_bookmarked: If the novel is bookmarked.
     :ivar bool is_muted: If the novel is muted.
     :ivar bool is_mypixiv_only: If the novel is mypixiv only.
@@ -342,17 +332,15 @@ class Novel:
     :ivar bool is_original: If the novel is an original.
     :ivar int page_count: The number of pages.
     :ivar int restrict: The restriction.
-    :ivar series: If the novel is in a series, this will be a dict
-        with the ``id`` and ``title`` key/value pairs of the series.
-        If the novel is not in a series, this will be ``None``.
+    :ivar series: If the novel is in a series, this will be a dict with the ``id`` and
+        ``title`` key/value pairs of the series. If the novel is not in a series, this
+        will be ``None``.
     :ivar list tags: A list of dicts containing three keys: ``name``,
-        ``translated_name``, and ``added_by_uploaded_user``.
-        The ``translated_name`` will be ``None`` if the client language
-        is not set.
+        ``translated_name``, and ``added_by_uploaded_user``. The ``translated_name``
+        will be ``None`` if the client language is not set.
     :ivar int text_length: The length of the novel.
     :ivar str title: The title of the novel.
-    :ivar int total_bookmarks: The number of times the novel has been
-        bookmarked.
+    :ivar int total_bookmarks: The number of times the novel has been bookmarked.
     :ivar int total_comments: The total number of comments on the novel.
     :ivar int total_view: The number of times the novel has been viewed.
     :ivar User user: The author of the novel.
@@ -420,10 +408,9 @@ class Comment:
     :ivar str comment: Content of the comment
     :ivar datetime.datetime date: Date the comment was posted
     :ivar int id: ID of the comment
-    :ivar Comment parent_comment: A parent comment to this comment
-        (can be ``None``)
-    :ivar User user: The poster of the comment. Does not return whether
-        or not the user is followed.
+    :ivar Comment parent_comment: A parent comment to this comment (can be ``None``)
+    :ivar User user: The poster of the comment. Does not return whether or not the user
+        is followed.
     """
 
     def __init__(self, comment, date, id, parent_comment, user, client=None):
