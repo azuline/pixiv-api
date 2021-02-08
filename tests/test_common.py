@@ -1,6 +1,8 @@
+from datetime import datetime, timedelta, timezone
+
 import pytest
 
-from pixivapi.common import format_bool, parse_qs, require_auth
+from pixivapi.common import format_bool, parse_qs, parse_timestamp, require_auth
 from pixivapi.errors import AuthenticationRequired
 
 
@@ -42,3 +44,8 @@ def test_format_bool(arg, result):
 def test_parse_qs():
     next_url = "https://localhost?next=30"
     assert parse_qs(next_url, "next") == 30
+
+
+def test_parse_timestamp():
+    expected = datetime(2020, 1, 1, 0, 0, tzinfo=timezone(timedelta(seconds=32400)))
+    assert parse_timestamp("2020-01-01T00:00:00+09:00") == expected

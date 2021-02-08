@@ -134,3 +134,75 @@ def test_fetch_illustration_comments(client, snapshot):
     snapshot.assert_match(
         client.fetch_illustration_comments(86979680, include_total_comments=True)
     )
+
+
+@responses.activate
+def test_fetch_illustration_related(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v2/illust/related",
+        json=mr.FETCH_ILLUSTRATION_RELATED,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_illustration_related(86979680))
+
+
+@responses.activate
+def test_fetch_illustrations_following(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v2/illust/follow",
+        json=mr.FETCH_ILLUSTRATIONS_FOLLOWING,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_illustrations_following())
+
+
+@responses.activate
+def test_fetch_illustrations_recommended(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/illust/recommended",
+        json=mr.FETCH_ILLUSTRATIONS_RECOMMENDED,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_illustrations_recommended())
+
+
+@responses.activate
+def test_fetch_illustrations_ranking(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/illust/ranking",
+        json=mr.FETCH_ILLUSTRATIONS_RANKING,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_illustrations_ranking())
+
+
+@responses.activate
+def test_fetch_trending_tags(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/trending-tags/illust",
+        json=mr.FETCH_TRENDING_TAGS,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_trending_tags())
+
+
+@responses.activate
+def test_fetch_bookmark(client, snapshot):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v2/illust/bookmark/detail",
+        json=mr.FETCH_BOOKMARK,
+        status=200,
+    )
+
+    snapshot.assert_match(client.fetch_bookmark(86044539))

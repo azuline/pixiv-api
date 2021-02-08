@@ -304,7 +304,7 @@ class Client:
     def fetch_illustration_related(self, illustration_id, offset=None):
         """
         Fetch illustrations related to a specified illustration. A
-        maximum of TODO are returned in one response.
+        maximum of 30 illustrations are returned in one response.
 
         :param int illustration_id: ID of the illustration.
         :param int offset: Illustrations to offset by.
@@ -595,7 +595,12 @@ class Client:
         }
 
     @require_auth
-    def add_bookmark(self, illustration_id, visibility=Visibility.PUBLIC, tags=None):
+    def add_bookmark(  # pragma: no cover
+        self,
+        illustration_id,
+        visibility=Visibility.PUBLIC,
+        tags=None,
+    ):
         """
         Bookmark an illustration.
 
@@ -617,7 +622,7 @@ class Client:
         )
 
     @require_auth
-    def delete_bookmark(self, illustration_id):
+    def delete_bookmark(self, illustration_id):  # pragma: no cover
         """
         Delete a bookmark.
 
