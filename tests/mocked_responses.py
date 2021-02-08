@@ -18512,3 +18512,114 @@ FETCH_FOLLOWERS = {
         },
     ],
 }
+
+SINGLE_PAGE_ILLUSTRATION_DATA = {
+    "caption": "",
+    "create_date": "2020-12-02T13:12:14+09:00",
+    "height": 1132,
+    "id": 86044539,
+    "image_urls": {
+        "large": "https://i.pximg.net/c/600x1200_90/img-master/img/2020/12/02/13/12/14/86044539_p0_master1200.jpg",
+        "medium": "https://i.pximg.net/c/540x540_70/img-master/img/2020/12/02/13/12/14/86044539_p0_master1200.jpg",
+        "square_medium": "https://i.pximg.net/c/360x360_70/img-master/img/2020/12/02/13/12/14/86044539_p0_square1200.jpg",
+    },
+    "is_bookmarked": True,
+    "is_muted": False,
+    "meta_pages": [],
+    "meta_single_page": {
+        "original_image_url": "https://i.pximg.net/img-original/img/2020/12/02/13/12/14/86044539_p0.jpg"
+    },
+    "page_count": 1,
+    "restrict": 0,
+    "sanity_level": 2,
+    "series": None,
+    "tags": [
+        {"name": "ghostblade", "translated_name": None},
+        {"name": "风玲", "translated_name": None},
+        {"name": "ボディチェーン", "translated_name": "body chain"},
+        {"name": "プランジングネック", "translated_name": "plunging neckline"},
+        {
+            "name": "オリジナル10000users入り",
+            "translated_name": "original 10000+ bookmarks",
+        },
+    ],
+    "title": "Shine",
+    "tools": ["Photoshop"],
+    "total_bookmarks": 12474,
+    "total_comments": 661,
+    "total_view": 96336,
+    "type": "illust",
+    "user": {
+        "account": "wlop",
+        "id": 2188232,
+        "is_followed": False,
+        "name": "wlop",
+        "profile_image_urls": {
+            "medium": "https://i.pximg.net/user-profile/img/2016/01/20/14/32/29/10408877_978587c10c1ac2b02bca0caea6519c97_170.jpg"
+        },
+    },
+    "visible": True,
+    "width": 1992,
+    "x_restrict": 0,
+}
+
+MULTI_PAGE_ILLUSTRATION_DATA ={
+        "caption": "",
+        "create_date": "2021-01-11T15:54:04+09:00",
+        "height": 1992,
+        "id": 86979680,
+        "image_urls": {
+            "large": "https://i.pximg.net/c/600x1200_90/img-master/img/2021/01/11/15/54/04/86979680_p0_master1200.jpg",
+            "medium": "https://i.pximg.net/c/540x540_70/img-master/img/2021/01/11/15/54/04/86979680_p0_master1200.jpg",
+            "square_medium": "https://i.pximg.net/c/360x360_70/img-master/img/2021/01/11/15/54/04/86979680_p0_square1200.jpg",
+        },
+        "is_bookmarked": False,
+        "is_muted": False,
+        "meta_pages": [
+            {
+                "image_urls": {
+                    "large": "https://i.pximg.net/c/600x1200_90/img-master/img/2021/01/11/15/54/04/86979680_p0_master1200.jpg",
+                    "medium": "https://i.pximg.net/c/540x540_70/img-master/img/2021/01/11/15/54/04/86979680_p0_master1200.jpg",
+                    "original": "https://i.pximg.net/img-original/img/2021/01/11/15/54/04/86979680_p0.jpg",
+                    "square_medium": "https://i.pximg.net/c/360x360_70/img-master/img/2021/01/11/15/54/04/86979680_p0_square1200.jpg",
+                }
+            },
+            {
+                "image_urls": {
+                    "large": "https://i.pximg.net/c/600x1200_90/img-master/img/2021/01/11/15/54/04/86979680_p1_master1200.jpg",
+                    "medium": "https://i.pximg.net/c/540x540_70/img-master/img/2021/01/11/15/54/04/86979680_p1_master1200.jpg",
+                    "original": "https://i.pximg.net/img-original/img/2021/01/11/15/54/04/86979680_p1.jpg",
+                    "square_medium": "https://i.pximg.net/c/360x360_70/img-master/img/2021/01/11/15/54/04/86979680_p1_square1200.jpg",
+                }
+            },
+        ],
+        "meta_single_page": {},
+        "page_count": 2,
+        "restrict": 0,
+        "sanity_level": 2,
+        "series": None,
+        "tags": [
+            {"name": "ghostblade", "translated_name": None},
+            {"name": "wlop", "translated_name": None},
+            {"name": "オリジナル5000users入り", "translated_name": "original 5000+ bookmarks"},
+            {"name": "中国风", "translated_name": "Chinese style"},
+        ],
+        "title": "天南阁",
+        "tools": ["Photoshop"],
+        "total_bookmarks": 7191,
+        "total_comments": 51,
+        "total_view": 64167,
+        "type": "illust",
+        "user": {
+            "account": "wlop",
+            "id": 2188232,
+            "is_followed": True,
+            "name": "wlop",
+            "profile_image_urls": {
+                "medium": "https://i.pximg.net/user-profile/img/2016/01/20/14/32/29/10408877_978587c10c1ac2b02bca0caea6519c97_170.jpg"
+            },
+        },
+        "visible": True,
+        "width": 988,
+        "x_restrict": 0,
+    }

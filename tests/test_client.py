@@ -15,24 +15,9 @@ credentials.
 import pytest
 import responses
 
-from pixivapi import Client, Duration, LoginError
+from pixivapi import BadApiResponse, Duration, LoginError
 from pixivapi.client import AUTH_URL, BASE_URL
-from pixivapi.errors import BadApiResponse
 from tests import mocked_responses as mr
-
-
-@pytest.fixture
-def client():
-    """For use in post-auth content-related tests."""
-    c = Client()
-    c.access_token = "xxx"
-    return c
-
-
-@pytest.fixture
-def unauthed_client():
-    """For use in authentication-related tests."""
-    return Client()
 
 
 @responses.activate
