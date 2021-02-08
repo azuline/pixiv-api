@@ -1,5 +1,5 @@
 """
-The models package contains dataclasses that wrap entities returned
+The models module contains dataclasses that wrap entities returned
 from Pixiv's API.
 """
 

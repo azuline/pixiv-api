@@ -1,5 +1,5 @@
 """
-The errors package defines the errors used in this library's API.
+The errors module defines the errors used in this library's API.
 """
 
 
