@@ -1,7 +1,7 @@
 pixiv-api documentation
 -----------------------
 
-A library for the Pixiv API.
+A documented, idiomatic, and tested wrapper library around Pixiv's App API.
 
 Install with:
 

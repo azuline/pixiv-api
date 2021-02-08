@@ -54,7 +54,7 @@ jobs:
       - name: Run lint check.
         run: make lintcheck
 
-  setupfiles:
+  setup_py:
     name: Setupfiles
     runs-on: ubuntu-latest
     steps:
