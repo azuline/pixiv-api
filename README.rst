@@ -2,7 +2,7 @@
 pixiv-api
 =========
 
-|CI| |Codecov| |Docs| |PyPI| |Pyversions|
+|CI| |Codecov| |Docs| |PyPI|
 
 .. |CI| image:: https://img.shields.io/github/workflow/status/azuline/pixiv-api/CI
    :target: https://github.com/azuline/pixiv-api/actions
@@ -12,10 +12,10 @@ pixiv-api
    :target: https://pixiv-api.readthedocs.io/en/latest/?badge=latest
 .. |PyPI| image:: https://img.shields.io/pypi/v/pixiv-api.svg
    :target: https://pypi.python.org/pypi/pixiv-api
-.. |Pyversions| image:: https://img.shields.io/pypi/pyversions/pixiv-api.svg
-   :target: https://pypi.python.org/pypi/pixiv-api
 
 A documented, idiomatic, and tested wrapper library around Pixiv's App API.
+
+Supports Python versions 3.6+.
 
 Install with:
 
@@ -39,13 +39,13 @@ logging in with a username and password:
 
 .. code-block:: python
 
-   client.login('username', 'password')
+   client.login("username", "password")
 
 And another is with a refresh token.
 
 .. code-block:: python
 
-   client.authenticate('refresh_token')
+   client.authenticate("refresh_token")
 
 Once authenticated, a refresh token can be saved for future authorizations.
 
@@ -63,8 +63,9 @@ image from Pixiv.
    from pixivapi import Size
 
    illustration = client.fetch_illustration(75523989)
+
    illustration.download(
-       directory=Path.home() / 'my_pixiv_images',
+       directory=Path.home() / "my_pixiv_images",
        size=Size.ORIGINAL,
    )
 
@@ -76,19 +77,20 @@ And the next code block downloads all illustrations of an artist.
    from pixivapi import Size
 
    artist_id = 2188232
-   directory = Path.home() / 'wlop'
+   directory = Path.home() / "wlop"
 
    response = client.fetch_user_illustrations(artist_id)
+
    while True:
-       for illust in response['illustrations']:
+       for illust in response["illustrations"]:
            illust.download(directory=directory, size=Size.ORIGINAL)
 
-       if not response['next']:
+       if not response["next"]:
            break
 
        response = client.fetch_user_illustrations(
            artist_id,
-           offset=response['next'],
+           offset=response["next"],
        )
 
-Read the complete documentation at https://pixiv-api.readthedocs.io.
+Read the full documentation at https://pixiv-api.readthedocs.io.

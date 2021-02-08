@@ -24,7 +24,7 @@ if os.path.exists(readme_path):
 setup(
     long_description=readme,
     name='pixiv-api',
-    version='0.3.7',
+    version='1.0.0',
     description='A library for the Pixiv API.',
     python_requires='==3.*,>=3.6.0',
     project_urls={"repository": "https://github.com/azuline/pixiv-api"},

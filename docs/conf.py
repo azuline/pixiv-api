@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.abspath("../"))
 project = "pixiv-api"
 copyright = "2021, blissful"
 author = "blissful"
-release = "0.3.7"
+release = "1.0.0"
 
 # -- General configuration
 

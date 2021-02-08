@@ -1,6 +1,13 @@
 Changelog
 ---------
 
+v1.0.0
+^^^^^^
+
+- Fixed Py3.6 bug where datetimes failed to deserialize.
+- Add reprs to model classes.
+- Add a test suite and some CI checks.
+
 v0.3.7
 ^^^^^^
 
