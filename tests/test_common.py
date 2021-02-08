@@ -49,3 +49,8 @@ def test_parse_qs():
 def test_parse_timestamp():
     expected = datetime(2020, 1, 1, 0, 0, tzinfo=timezone(timedelta(seconds=32400)))
     assert parse_timestamp("2020-01-01T00:00:00+09:00") == expected
+
+
+def test_parse_timestamp_no_colon():
+    expected = datetime(2020, 1, 1, 0, 0, tzinfo=timezone(timedelta(seconds=32400)))
+    assert parse_timestamp("2020-01-01T00:00:00+0900") == expected

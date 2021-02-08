@@ -58,7 +58,7 @@ class Client:
         self.session = cloudscraper.create_scraper()
         self.session.headers.update(HEADERS)
 
-        if self.language:
+        if self.language:  # pragma: no cover
             self.session.headers.update({"Accept-Language": self.language})
 
     def _request_json(self, method, url, params=None, headers=None, data=None):

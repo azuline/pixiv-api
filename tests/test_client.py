@@ -17,6 +17,7 @@ import responses
 
 from pixivapi import Client, Duration, LoginError
 from pixivapi.client import AUTH_URL, BASE_URL
+from pixivapi.errors import BadApiResponse
 from tests import mocked_responses as mr
 
 
@@ -32,6 +33,18 @@ def client():
 def unauthed_client():
     """For use in authentication-related tests."""
     return Client()
+
+
+@responses.activate
+def test_download(client, tmp_path):
+    url = "http://localhost/file"
+    file = tmp_path / "file"
+
+    responses.add(responses.GET, url, body=b"owo", status=200)
+    client.download(url, file)
+
+    with file.open("rb") as fp:
+        assert fp.read() == b"owo"
 
 
 @responses.activate
@@ -169,7 +182,9 @@ def test_fetch_illustrations_recommended(client, snapshot):
         status=200,
     )
 
-    snapshot.assert_match(client.fetch_illustrations_recommended())
+    snapshot.assert_match(
+        client.fetch_illustrations_recommended(bookmark_illust_ids=[85596934, 86044539])
+    )
 
 
 @responses.activate
@@ -278,3 +293,29 @@ def test_fetch_followers(client, snapshot):
     )
 
     snapshot.assert_match(client.fetch_followers())
+
+
+@responses.activate
+def test_bad_api_response(client):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/illust/detail",
+        json={},
+        status=400,
+    )
+
+    with pytest.raises(BadApiResponse):
+        client.fetch_illustration(86979680)
+
+
+@responses.activate
+def test_bad_json_decode(client):
+    responses.add(
+        responses.GET,
+        f"{BASE_URL}/v1/illust/detail",
+        body="json derulo blissful remix",
+        status=200,
+    )
+
+    with pytest.raises(BadApiResponse):
+        client.fetch_illustration(86979680)
