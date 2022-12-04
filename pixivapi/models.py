@@ -242,6 +242,9 @@ class Illustration:
         x_restrict,
         client=None,
         total_comments=None,
+        illust_ai_type=None,
+        illust_book_style=None,
+        comment_access_control=None
     ):
         self.caption = caption
         self.create_date = parse_timestamp(create_date)
@@ -272,6 +275,9 @@ class Illustration:
         self.x_restrict = x_restrict
         self.client = client
         self.total_comments = total_comments
+        self.illust_ai_type = illust_ai_type
+        self.illust_book_style = illust_book_style
+        self.comment_access_control = comment_access_control 
 
     def __repr__(self):
         return f"<Illustration id={self.id} user={self.user.name}>"
