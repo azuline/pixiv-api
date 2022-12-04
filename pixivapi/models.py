@@ -242,6 +242,9 @@ class Illustration:
         x_restrict,
         client=None,
         total_comments=None,
+        illust_ai_type=None,
+        illust_book_style=None,
+        comment_access_control=None
     ):
         self.caption = caption
         self.create_date = parse_timestamp(create_date)
