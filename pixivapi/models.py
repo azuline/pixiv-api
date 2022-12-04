@@ -275,6 +275,9 @@ class Illustration:
         self.x_restrict = x_restrict
         self.client = client
         self.total_comments = total_comments
+        self.illust_ai_type = illust_ai_type
+        self.illust_book_style = illust_book_style
+        self.comment_access_control = comment_access_control 
 
     def __repr__(self):
         return f"<Illustration id={self.id} user={self.user.name}>"
