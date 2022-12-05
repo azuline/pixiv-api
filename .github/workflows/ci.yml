@@ -19,6 +19,8 @@ jobs:
         with:
           python-version: ${{ matrix.pyversion }}
       - uses: abatilo/actions-poetry@v2.1.0
+        with:
+          poetry-version: 1.2.0
       - name: Cache dependencies.
         id: cache-deps
         uses: actions/cache@v2
