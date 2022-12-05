@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   test:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        pyversion: ['3.6', '3.7', '3.8', '3.9']
+        pyversion: ["3.7", "3.8", "3.9", "3.10", "3.11"]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: abatilo/actions-poetry@v2.1.0
         with:
-          poetry-version: 1.1.4
+          poetry-version: 1.2.0
       - name: Cache dependencies.
         id: cache-deps
         uses: actions/cache@v2
@@ -62,7 +62,7 @@ jobs:
       - uses: actions/setup-python@v2
       - uses: abatilo/actions-poetry@v2.1.0
         with:
-          poetry-version: 1.1.4
+          poetry-version: 1.2.0
       - name: Cache dependencies.
         id: cache-deps
         uses: actions/cache@v2
