@@ -18,9 +18,8 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.pyversion }}
-      - uses: abatilo/actions-poetry@v2.1.0
-        with:
-          poetry-version: 1.2.0
+      - name: Install poetry.
+        run: pipx install poetry --python $(which python)
       - name: Cache dependencies.
         id: cache-deps
         uses: actions/cache@v2
@@ -41,9 +40,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - uses: abatilo/actions-poetry@v2.1.0
         with:
-          poetry-version: 1.2.0
+          python-version: 3.11
+      - name: Install poetry.
+        run: pipx install poetry --python $(which python)
       - name: Cache dependencies.
         id: cache-deps
         uses: actions/cache@v2
@@ -62,9 +62,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-      - uses: abatilo/actions-poetry@v2.1.0
         with:
-          poetry-version: 1.2.0
+          python-version: 3.11
+      - name: Install poetry.
+        run: pipx install poetry --python $(which python)
       - name: Cache dependencies.
         id: cache-deps
         uses: actions/cache@v2
